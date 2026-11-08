@@ -91,6 +91,7 @@ data class AboutData(
     val sections: List<AboutSection>,
     val sourceUrl: String,
     val links: List<AboutLinkData> = emptyList(),
+    val contactEmail: String? = ABOUT_CONTACT_EMAIL,
 )
 
 /**
@@ -185,10 +186,11 @@ fun aboutDrawers(data: AboutData, intro: String = "What it does", contact: Strin
         bodies.add(s.body)
     }
     shut()
-    val holder = drawers.indexOfFirst { d -> d.bodies.any { ABOUT_CONTACT_EMAIL in it } }
-    if (holder >= 0) drawers[holder] = drawers[holder].copy(contact = ABOUT_CONTACT_EMAIL)
+    val email = data.contactEmail
+    val holder = if (email == null) -1 else drawers.indexOfFirst { d -> d.bodies.any { email in it } }
+    if (holder >= 0) drawers[holder] = drawers[holder].copy(contact = email)
     if (data.links.isNotEmpty()) drawers.add(AboutDrawer("links", links, emptyList(), links = data.links))
-    if (holder < 0) drawers.add(AboutDrawer("contact", contact, emptyList(), contact = ABOUT_CONTACT_EMAIL))
+    if (holder < 0 && email != null) drawers.add(AboutDrawer("contact", contact, emptyList(), contact = email))
     return drawers
 }
 

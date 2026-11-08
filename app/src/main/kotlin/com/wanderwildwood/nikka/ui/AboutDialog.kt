@@ -25,6 +25,8 @@ fun AboutDialog(onDismiss: () -> Unit) {
             AboutSection(null, stringResource(R.string.about_sound)),
         ),
         sourceUrl = SOURCE_URL,
+        links = listOf(AboutLinkData("Nikka source and credits", "https://github.com/wanderwildwood/nikka")),
+        contactEmail = null,
     )
     val labels = AboutLabels(
         close = stringResource(R.string.about_close),
