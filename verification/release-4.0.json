@@ -1,7 +1,7 @@
 {
   "version": "4.0",
   "versionCode": 5,
-  "builtAtUtc": "2026-11-08T16:02:13.011467+00:00",
+  "builtAtUtc": "2026-11-08T16:27:48.521599+00:00",
   "buildResult": "SUCCESSFUL",
   "tasks": [
     "assembleDebug",
@@ -10,7 +10,7 @@
     "assembleRelease"
   ],
   "tests": {
-    "tests": 214,
+    "tests": 215,
     "failures": 0,
     "errors": 0,
     "skipped": 0
@@ -124,7 +124,7 @@
     },
     {
       "name": "org.breatheless.app.KompaktUiTest",
-      "tests": "12",
+      "tests": "13",
       "failures": "0",
       "errors": "0",
       "skipped": "0"
@@ -173,7 +173,7 @@
     {
       "file": "Upekkha-v4.0.apk",
       "size": 29571783,
-      "sha256": "2dada407f6baf2d345667008293103c5501a3cd22a17cdffb9f2f3bf16ae6a58",
+      "sha256": "ba2a10354583823bf44456819caf48a74d5ab2e589ddc8bb5a353cd86489dce9",
       "certificateSha256": "a5edb5474ed2435c35c086b1920a0acfdfeac91ad00c7fb6659c9017a44e2268",
       "applicationId": "org.breatheless.app",
       "versionCode": 5,
@@ -194,8 +194,8 @@
     },
     {
       "file": "Upekkha-v4.0-debug.apk",
-      "size": 57285096,
-      "sha256": "135b217d7f23bfbc5aa95a55f1602dfc8afd85b76ec6baea6e165e75431f4c98",
+      "size": 58295424,
+      "sha256": "3c210424286c73fb28eeceffddfd374afd71b6e27a0744d12be078403897c7b7",
       "certificateSha256": "a5edb5474ed2435c35c086b1920a0acfdfeac91ad00c7fb6659c9017a44e2268",
       "applicationId": "org.breatheless.app",
       "versionCode": 5,
@@ -229,7 +229,8 @@
     "15-second sitting schedule and alarm-clock scheduling with exact permission",
     "Walking quit versus deliberate completion",
     "Fullscreen window flag and unchanged system brightness",
-    "Native Android 12 render at compact 480-pixel width"
+    "Native Android 12 render at compact 480-pixel width",
+    "Sit Start stays visible with permission help; short interval selected and persisted using touch paging"
   ],
   "limitations": [
     "No physical Mudita Kompakt or full Android emulator was available. Android 12 UI, service and platform tests used Robolectric.",

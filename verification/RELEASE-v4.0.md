@@ -2,7 +2,7 @@
 
 `assembleDebug testDebugUnitTest lintDebug assembleRelease` completed successfully. Both debug and optimized release APKs were built with the original Upekkhā signing identity.
 
-All 214 JUnit tests passed with no skips, including 64 nested production checks. Coverage includes exact imported exercise layouts, complete Classical and Diminished sessions, pulse conversion, immutable screen snapshots, actual UI taps from the first CP through recording completion, recovery and final CP, discard-on-quit, history deletion, saved-practice editing, touch duration controls, visible cue changes, backup migration and short interval scheduling. Home, Sit, Freestyle, Instructions and Guided recording screens were rendered natively and inspected at Kompakt width.
+All 215 JUnit tests passed with no skips, including 64 nested production checks. Coverage includes exact imported exercise layouts, complete Classical and Diminished sessions, pulse conversion, immutable screen snapshots, actual UI taps from the first CP through recording completion, recovery and final CP, discard-on-quit, history deletion, saved-practice editing, touch duration controls, visible cue changes, backup migration and short interval scheduling. Home, Sit, Freestyle, Instructions and Guided recording screens were rendered natively and inspected at Kompakt width.
 
 Lint completed with no errors. Remaining warnings are style/API recommendations and intentional compatibility choices, including fullscreen flags supported by Android 12, programmatic views, legacy resource lookup and synchronous persistence for running meditation state.
 
@@ -15,8 +15,8 @@ No physical Kompakt or full Android emulator was available. Robolectric cannot e
 ## Checksums
 
 ```text
-2dada407f6baf2d345667008293103c5501a3cd22a17cdffb9f2f3bf16ae6a58  Upekkha-v4.0.apk
-135b217d7f23bfbc5aa95a55f1602dfc8afd85b76ec6baea6e165e75431f4c98  Upekkha-v4.0-debug.apk
+ba2a10354583823bf44456819caf48a74d5ab2e589ddc8bb5a353cd86489dce9  Upekkha-v4.0.apk
+3c210424286c73fb28eeceffddfd374afd71b6e27a0744d12be078403897c7b7  Upekkha-v4.0-debug.apk
 ```
 
 The detailed report is [release-4.0.json](release-4.0.json). Repeat APK checks with [verify-apk.py](verify-apk.py).
