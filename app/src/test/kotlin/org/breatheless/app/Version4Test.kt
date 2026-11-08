@@ -31,4 +31,6 @@ class Version4Test {
     @Test fun holdsRoundTripWithoutEnteringCpStatistics() {val e=Entry("v4",1760000000000,"Classical",1000,"Completed",listOf(CpValue(20.0,1760000000000,true,"CP")),holds=listOf(HoldValue(Kind.MP_FULL,90.0,1760000000000,true,"Full effort")));assertEquals(e,Codec.readEntry(Codec.entry(e)));assertEquals(20.0,Analysis.stats(e.cps){0}!!.average,0.0)}
     @Test(expected=IllegalArgumentException::class) fun cpCannotBeSmuggledIntoOtherHoldRecords() {val e=Entry("v4",1760000000000,"Test",1,"Completed",holds=listOf(HoldValue(Kind.CP,10.0,1760000000000,true,"bad")));Codec.readEntry(Codec.entry(e))}
     @Test fun everyBlockAndEndingUsesAnExistingCue() {assertEquals(Signals.events.size,Signals.events.distinct().size);Signals.events.forEach{event->assertTrue(Signals.tones.any{it.id==Signals.defaultTone(event)})}}
+    @Test fun delayedHoldStopCannotProduceAnUnreadableRecord() {val e=Engine(Protocol("late","Late","",listOf(Phase(Kind.MP_FULL))),0);e.startCp(1000);e.tick(1900000);assertTrue(e.interrupted);assertEquals(600.0,e.pendingCp,0.0);val row=Entry("late",1760000000000,"Late",1900,"Completed",holds=listOf(HoldValue(Kind.MP_FULL,e.pendingCp,1760000000000,false,"Late pause")));assertEquals(row,Codec.readEntry(Codec.entry(row)))}
+
 }

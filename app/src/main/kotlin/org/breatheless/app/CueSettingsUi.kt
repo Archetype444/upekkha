@@ -63,8 +63,8 @@ fun CueSettingsScreen(onBack: () -> Unit) {
                 item { SettingRow("Ambience", config.optString("ambience", "Off")) { dialog = "ambience" } }
                 item { SettingRow("Ambience volume", "${config.optInt("volume", 30)}%") { dialog = "volume" } }
                 item { SwitchRow("Pulse before and after practice", config.optBoolean("pulsePrompt", false)) { set("pulsePrompt", it) } }
-                item { SwitchRow("Hide the running CP time", config.optBoolean("hideCp",true)) { set("hideCp", it) } }
-                item { SwitchRow("Volume buttons control CP", config.optBoolean("volumeKeys", false), "Either button starts or stops CP. Afterward, volume up keeps the value; volume down excludes it.") { set("volumeKeys", it) } }
+                item { SwitchRow("Hide the running pause time", config.optBoolean("hideCp",true)) { set("hideCp", it) } }
+                item { SwitchRow("Volume buttons control pauses", config.optBoolean("volumeKeys", false), "Either button starts or stops a pause. Afterward, volume up keeps the value; volume down excludes it.") { set("volumeKeys", it) } }
                 item { Heading("Morning CP reminder") }
                 item { SwitchRow("Daily reminder", config.optBoolean("morningReminder", false)) { enabled ->
                     if (enabled && Build.VERSION.SDK_INT >= 33) permission.launch(Manifest.permission.POST_NOTIFICATIONS) else set("morningReminder", enabled)

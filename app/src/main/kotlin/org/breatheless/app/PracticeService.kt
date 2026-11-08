@@ -199,7 +199,7 @@ class PracticeService : Service() {
         if (ending || e.state != State.FINISHED) return
         val entry = Entry(recordId, began, e.protocol.name, e.total(SystemClock.elapsedRealtime()), "Completed", cps.toList(), pulses.toList(), context = if (e.protocol.id == "morning") "Morning" else "Practice", holds = holds.toList())
         try { store.upsert(entry); store.active.delete(); savedId = entry.id; lastResult = entry.id }
-        catch (error: Exception) { note = "Practice finished, but saving failed. ${error.message.orEmpty()}"; failure = note; publish(); return }
+        catch (error: Exception) { handler.removeCallbacks(ticker); note = "Practice finished, but saving failed. ${error.message.orEmpty()}"; failure = note; publish(); return }
         ending = true; stopPlayback(); feedback.signal("END"); publish()
         handler.removeCallbacks(ticker)
         handler.postDelayed({

@@ -219,6 +219,11 @@ fun PulseCounter(onDismiss:()->Unit,onDone:(Int)->Unit) {
     val pulseContext=LocalContext.current
     val feedback=remember{Feedback(pulseContext)}
     DisposableEffect(feedback){onDispose{feedback.release()}}
+    DisposableEffect(began,left>0) {
+        val window=(pulseContext as? Activity)?.window
+        if(began>0 && left>0)window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        onDispose{window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)}
+    }
     LaunchedEffect(began){if(began>0)while(left>0){delay(200);val remaining=(duration-(SystemClock.elapsedRealtime()-began)/1000).toInt().coerceAtLeast(0);if(remaining==0 && left>0)feedback.signal("PULSE_END");left=remaining}}
     EInkDialog(onDismiss=onDismiss) {
         TextMMD(text="Count pulse",fontWeight=FontWeight.Bold)

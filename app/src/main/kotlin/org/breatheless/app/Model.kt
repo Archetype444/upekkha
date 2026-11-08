@@ -102,7 +102,7 @@ class Engine(source:Protocol,private val started:Long) {
         return false
     }
     fun startCp(now:Long){check(state==State.CP_READY || state==State.HOLD_READY);cpStarted=now;state=if(phase.kind==Kind.CP)State.CP_RUNNING else State.HOLD_RUNNING}
-    fun stopCp(now:Long,invalid:Boolean=false){check(state==State.CP_RUNNING || state==State.HOLD_RUNNING);pendingCp=cpElapsed(now);interrupted=invalid;state=if(phase.kind==Kind.CP)State.CP_REVIEW else State.HOLD_REVIEW}
+    fun stopCp(now:Long,invalid:Boolean=false){check(state==State.CP_RUNNING || state==State.HOLD_RUNNING);val raw=cpElapsed(now);val limit=if(phase.kind==Kind.CP)120.0 else 600.0;pendingCp=min(raw,limit);interrupted=invalid || raw>=limit;state=if(phase.kind==Kind.CP)State.CP_REVIEW else State.HOLD_REVIEW}
     fun startPulse(now:Long){check(state==State.PULSE_READY);pulseBeats=0;deadline=now+phase.seconds*1000L;state=State.PULSE_RUNNING}
     fun setPulseBeats(beats:Int){check(state in listOf(State.PULSE_RUNNING,State.PULSE_REVIEW));pulseBeats=beats.coerceIn(0,250)}
     fun pause(now:Long){if(state in listOf(State.CP_RUNNING,State.HOLD_RUNNING)){stopCp(now,true);return};if(state==State.PULSE_RUNNING){pulseBeats=0;state=State.PULSE_READY;return};if(state in listOf(State.TIMED,State.LISTENING,State.CP_READY,State.HOLD_READY,State.PULSE_READY)){previous=state;pausedAt=now;state=State.PAUSED}}

@@ -1,4 +1,4 @@
-Upekkhā 3.0
+Upekkhā 4.0
 
 Mindfulness Buteyko — Marilleke Vrancken
 MP3 supplied by the user for this version. Bundled unchanged, once, as assets/audio/mindfulness.mp3.
@@ -19,3 +19,7 @@ Upekkhā 3.0 incorporates Nikka, copyright 2026 wander wildwood, GNU GPL version
 https://github.com/wanderwildwood/nikka
 Mudita MMD and AndroidX: Apache License 2.0. Lato: SIL Open Font License 1.1.
 Original notices and full license texts are included in the app and source.
+
+Diminished Breathing, Classical Buteyko sequences and exercise instructions adapted from Adam Shand’s breathe-less, copyright 2025 Adam Shand, MIT.
+https://github.com/adamshand/breathe-less
+Full MIT notice in assets/licenses/adam-breathe-less-mit.txt and the in-app Licenses section.

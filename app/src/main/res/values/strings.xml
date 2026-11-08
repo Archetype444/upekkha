@@ -226,7 +226,7 @@
     <string name="settings_dnd_note">Uses the phone’s Alarms only mode while sitting. Choose Alarm for bells to sound in this mode.</string>
     <string name="settings_backup_heading">Backup</string>
     <string name="settings_save_backup">Save a backup</string>
-    <string name="settings_save_backup_note">CP, practices, habits and settings in one file</string>
+    <string name="settings_save_backup_note">Practice records, saved setups and settings in one file</string>
     <string name="settings_restore">Restore from a backup</string>
     <string name="settings_restore_armed">Restore — this replaces everything here; tap again</string>
     <string name="backup_saved">Saved.</string>
@@ -238,7 +238,7 @@
     <!-- About -->
 
     <string name="about_title">Upekkhā %1$s</string>
-    <string name="about_what">Buteyko practice, meditation, guided breathing and habits, designed for the Mudita Kompakt.</string>
+    <string name="about_what">Buteyko practice, meditation, paced breathing and CP tracking for the Mudita Kompakt.</string>
     <string name="about_sound">Meditation bowl and breathing cues: Nikka, GPL v3. Wind and fireplace recordings: Ambientsounds, CC0. The original Mindfulness Buteyko recording is retained from Upekkhā 2.1.</string>
     <string name="about_feed_the_llamas">Support Nikka</string>
     <string name="about_close">Close</string>
@@ -249,7 +249,7 @@
     <string name="licences_back">Back</string>
     <string name="about_no_browser_address">No browser is installed. The address is %1$s.</string>
     <string name="about_privacy_head">Privacy</string>
-    <string name="about_privacy">Your practices, CP measurements, pulse, symptom scores, habits and settings stay in the private app storage on this phone. The app has no internet permission. Backup writes a file only where you choose. Android removes private app data when you uninstall. Permissions support session playback, bells, vibration, reminders and optional step counting. Do Not Disturb access is optional.</string>
+    <string name="about_privacy">Practice records, CP and other pause measurements, pulse, symptom scores, saved practices and settings stay in private storage on this phone. The app has no internet permission. Backup writes a file only where you choose. Android removes private app data when you uninstall. Permissions support playback, bells, vibration, reminders and optional step counting. Do Not Disturb access is optional.</string>
     <string name="about_terms_head">Terms</string>
     <string name="about_terms">Upekkhā is free software under GNU GPL v3 and comes without warranty. Use it to support personal practice. It does not diagnose or treat illness. Follow prescribed treatment and the practice safety guidance.</string>
     <string name="habit_name_needed">Give it a name.</string>
@@ -327,6 +327,6 @@
     <string name="privacy_contact_title">How to contact us</string>
     <string name="privacy_contact">Report app issues in the Upekkhā GitHub repository linked below.</string>
     <string name="privacy_rights_title">Your rights</string>
-    <string name="privacy_rights">You can keep a copy of your data with Save a backup, edit meditation records and habits, or remove local data through Android app settings. Existing comments and custom protocols are preserved in backups even though the diary and template screens have been removed.</string>
+    <string name="privacy_rights">You can save a copy of your data with Save a backup and delete sessions in Track history. Android app settings can remove all local data. Older comments and habit data remain preserved in backups.</string>
     <!-- /shared-about -->
 </resources>

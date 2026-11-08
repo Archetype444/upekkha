@@ -50,4 +50,21 @@ class PracticeServiceTest {
     @Test fun maximumPauseIsNeverAddedToCpSeries() {start(Protocol("test","Test","",listOf(Phase(Kind.MP_LIGHT))));service.startCp();ShadowSystemClock.advanceBy(Duration.ofSeconds(45));service.stopCp();service.review(true);val entry=Store.get(context).entries.single();assertTrue(entry.cps.isEmpty());assertEquals(Kind.MP_LIGHT,entry.holds.single().kind);assertEquals(45.0,entry.holds.single().seconds,.01)}
     @Test fun fifteenSecondPulseConvertsBeatCountToBpm() {start(Protocol("test","Test","",listOf(Phase(Kind.PULSE,15))));service.startPulse();service.pulseBeats(16);shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(15));assertEquals(State.PULSE_REVIEW,PracticeService.snapshot.value!!.state);service.recordPulse();assertEquals(64,Store.get(context).entries.single().pulses.single().bpm)}
     @Test fun quittingDuringPulseLeavesNoSession() {start(Protocol("test","Test","",listOf(Phase(Kind.PULSE,15))));service.startPulse();service.pulseBeats(15);service.discard();assertTrue(Store.get(context).entries.isEmpty())}
+    private fun completeProgram(program:Protocol):Entry {
+        start(program)
+        repeat(100) {
+            val e=service.engine!!
+            when(e.state) {
+                State.CP_READY,State.HOLD_READY -> {service.startCp();ShadowSystemClock.advanceBy(Duration.ofSeconds(if(e.phase.kind==Kind.CP)4 else 12));service.stopCp();service.review(true)}
+                State.PULSE_READY -> {service.startPulse();service.pulseBeats(16);shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(e.phase.seconds.toLong()));service.recordPulse()}
+                State.TIMED -> shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(e.remaining(android.os.SystemClock.elapsedRealtime())+1))
+                State.FINISHED -> return Store.get(context).entries.single()
+                else -> error("Unexpected state ${e.state}")
+            }
+        }
+        error("Program did not finish")
+    }
+    @Test fun fullClassicalProgramSavesTwoCpsThreeMaximumsAndTwoPulses() {val e=completeProgram(Presets.classical);assertEquals(2,e.cps.size);assertEquals(listOf(Kind.MP_LIGHT,Kind.MP_MEDIUM,Kind.MP_FULL),e.holds.map{it.kind});assertEquals(listOf(64,64),e.pulses.map{it.bpm});assertTrue(e.holds.all{it.valid});assertEquals(e,Codec.readEntry(Codec.entry(e)))}
+    @Test fun fullDiminishedProgramSavesExtendedPauseSeparately() {val e=completeProgram(Presets.diminished);assertEquals(2,e.cps.size);assertEquals(Kind.EXTENDED,e.holds.single().kind);assertEquals(2,e.pulses.size);assertEquals("Completed",e.status)}
+
 }
