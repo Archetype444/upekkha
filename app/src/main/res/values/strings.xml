@@ -65,7 +65,7 @@
     <string name="sit_start">Start</string>
 
     <!-- ============================================================ -->
-    <!-- While sitting: white text on a dark screen -->
+    <!-- Session display uses the same white background as the rest of the app. -->
 
     <string name="session_warming">Settling in</string>
     <string name="session_first_bell">The bell rings at %1$s</string>
@@ -223,10 +223,10 @@
     <string name="settings_bell_volume">Uses the selected sound-effects channel</string>
     <string name="settings_bell_ringing">Ringing</string>
     <string name="settings_dnd">Do not disturb while sitting</string>
-    <string name="settings_dnd_note">Alarms only, so the bells still ring</string>
+    <string name="settings_dnd_note">Uses the phone’s Alarms only mode while sitting. Choose Alarm for bells to sound in this mode.</string>
     <string name="settings_backup_heading">Backup</string>
     <string name="settings_save_backup">Save a backup</string>
-    <string name="settings_save_backup_note">Habits, ticks and the log, as one file where you choose</string>
+    <string name="settings_save_backup_note">CP, practices, habits and settings in one file</string>
     <string name="settings_restore">Restore from a backup</string>
     <string name="settings_restore_armed">Restore — this replaces everything here; tap again</string>
     <string name="backup_saved">Saved.</string>
@@ -238,8 +238,8 @@
     <!-- About -->
 
     <string name="about_title">Upekkhā %1$s</string>
-    <string name="about_what">A meditation timer and a habit tracker. What you log stays on the phone: the app has no internet permission.</string>
-    <string name="about_sound">Bowl sound made for this app, GPL v3</string>
+    <string name="about_what">Buteyko practice, meditation, guided breathing and habits, designed for the Mudita Kompakt.</string>
+    <string name="about_sound">Meditation bowl and breathing cues: Nikka, GPL v3. Wind and fireplace recordings: Ambientsounds, CC0. The original Mindfulness Buteyko recording is retained from Upekkhā 2.1.</string>
     <string name="about_feed_the_llamas">Support Nikka</string>
     <string name="about_close">Close</string>
     <string name="licences_title">Licenses</string>
@@ -249,9 +249,9 @@
     <string name="licences_back">Back</string>
     <string name="about_no_browser_address">No browser is installed. The address is %1$s.</string>
     <string name="about_privacy_head">Privacy</string>
-    <string name="about_privacy">This app collects nothing and sends nothing anywhere: it has no internet permission. Your habits, ticks, the log of sittings with any notes, and its settings stay in its own private storage on the phone; uninstalling removes them, and the app is not included in phone backups. Save a backup writes them as one file only where you choose, when you press it. Its permissions are for the bells and the breathing cues only: exact alarms so the bells ring on time, a foreground service and wake lock so they ring with the screen off, a notification while a sitting is under way, vibration to mark each breath when you choose that cue, and, only if you switch it on, Do Not Disturb access to set alarms only during a sitting. There are no ads, no analytics and no tracking.</string>
+    <string name="about_privacy">Your practices, CP measurements, pulse, symptom scores, habits and settings stay in the private app storage on this phone. The app has no internet permission. Backup writes a file only where you choose. Android removes private app data when you uninstall. Permissions support session playback, bells, vibration, reminders and optional step counting. Do Not Disturb access is optional.</string>
     <string name="about_terms_head">Terms</string>
-    <string name="about_terms">This app is free software under the GNU General Public License v3. It comes with no warranty, to the extent the law allows. It is a timer and a diary, not therapy or medical advice, and not a substitute for care.</string>
+    <string name="about_terms">Upekkhā is free software under GNU GPL v3 and comes without warranty. Use it to support personal practice. It does not diagnose or treat illness. Follow prescribed treatment and the practice safety guidance.</string>
     <string name="habit_name_needed">Give it a name.</string>
     <string name="sit_other_range">Enter a whole number of minutes, 1 to %1$d.</string>
     <string name="day_done">Done</string>
@@ -323,10 +323,10 @@
     <string name="about_contact_head">Contact</string>
     <string name="about_links_head">Links</string>
     <string name="privacy_who_title">Who we are</string>
-    <string name="privacy_who">This app is made by wander wildwood, an independent developer: one person, not a company. That makes wander wildwood the data controller for anything the app itself handles, and that is very little: what you put in stays on this phone unless you send it somewhere yourself, and nothing comes to the developer.</string>
+    <string name="privacy_who">Upekkhā is maintained in the Archetype444/upekkha repository. Its meditation interface and features incorporate Nikka by wander wildwood under GPL v3. See Licenses for credits.</string>
     <string name="privacy_contact_title">How to contact us</string>
-    <string name="privacy_contact">Write to email@wanderthe.dev, about your data or anything else.</string>
+    <string name="privacy_contact">Report app issues in the Upekkhā GitHub repository linked below.</string>
     <string name="privacy_rights_title">Your rights</string>
-    <string name="privacy_rights">Under the GDPR you can ask to see the data held about you, to have it corrected or deleted, to limit or object to its use, to take a copy with you, to withdraw consent, and to complain to a data protection authority. Since the app keeps what it stores only on your phone, you can do most of this yourself: delete a sitting or a habit in the app, save a copy with Save a backup, clear the app\'s data in Android\'s settings, or uninstall the app.</string>
+    <string name="privacy_rights">You can keep a copy of your data with Save a backup, edit meditation records and habits, or remove local data through Android app settings. Existing comments and custom protocols are preserved in backups even though the diary and template screens have been removed.</string>
     <!-- /shared-about -->
 </resources>

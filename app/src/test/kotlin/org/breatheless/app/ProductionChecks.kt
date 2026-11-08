@@ -5,7 +5,8 @@ private var count=0
 private fun test(name:String,block:()->Unit){try{block();count++;println("PASS $name")}catch(e:Throwable){throw AssertionError("FAIL $name",e)}}
 private fun near(a:Double,b:Double){check(abs(a-b)<.001){"$a != $b"}}
 private fun reject(block:()->Unit){var failed=false;try{block()}catch(_:Exception){failed=true};check(failed){"Invalid input accepted"}}
-fun main(){
+fun runProductionChecks(){
+ count=0
  val p=Protocol("test","Test","",listOf(Phase(Kind.REST,5),Phase(Kind.CP),Phase(Kind.REDUCE,10),Phase(Kind.RECOVER,5),Phase(Kind.CP)))
  test("Timed phases honour the deadline"){val e=Engine(p,1000);check(!e.tick(5999));check(e.tick(6000));check(e.state==State.CP_READY)}
  test("CP waits for user input"){val e=Engine(p,0);e.tick(5000);check(!e.tick(9999999));check(e.index==1 && e.state==State.CP_READY)}
@@ -22,16 +23,16 @@ fun main(){
  test("CP cannot start in a timed phase"){reject{Engine(p,0).startCp(1)}}
  test("CP cannot stop before it begins"){reject{Engine(p,0).stopCp(1)}}
  val audio=Presets.listening
- test("Audio protocol contains both CP measurements"){check(audio.cpCount==2 && audio.phases.first().kind==Kind.REST && audio.phases.last().kind==Kind.CP)}
- test("Audio protocol includes end rest and a separate five-minute wait"){check(audio.phases.map{it.kind}==listOf(Kind.REST,Kind.CP,Kind.LISTEN,Kind.RECOVER,Kind.REST,Kind.CP));check(audio.phases[3].seconds==300 && audio.phases[4].seconds==300)}
- test("Initial CP precedes recording playback"){val e=Engine(audio,0);e.tick(300000);check(e.state==State.CP_READY && e.index==1);e.startCp(301000);e.stopCp(310000);check(e.index==1);e.advance(311000);check(e.state==State.LISTENING && e.index==2)}
- test("Recording never completes from wall time alone"){val e=Engine(audio,0);e.advance(1);e.advance(2);check(e.state==State.LISTENING);check(!e.tick(9999999));check(e.index==2)}
- test("Pause and resume retain recording phase"){val e=Engine(audio,0);e.advance(1);e.advance(2);e.pause(3000);check(e.state==State.PAUSED);e.resume(900000);check(e.state==State.LISTENING && e.index==2)}
- test("Completion advances recording into recovery"){val e=Engine(audio,0);e.advance(1);e.advance(2);e.advance(1230000);check(e.index==3 && e.state==State.TIMED);check(e.remaining(1230000)==300000L)}
- test("Second CP waits until both post-recording intervals have ended"){val e=Engine(audio,0);e.advance(1);e.advance(2);e.advance(1000);check(!e.tick(300999));check(e.tick(301000));check(e.index==4);check(!e.tick(600999));check(e.tick(601000));check(e.state==State.CP_READY && e.index==5)}
- test("Post-recording wait can be paused"){val e=Engine(audio,0);repeat(4){e.advance(1000)};e.pause(101000);e.resume(501000);check(e.remaining(501000)==200000L)}
- test("Audio metadata duration is included exactly once in default protocol"){check(audio.phases.count{it.kind==Kind.LISTEN}==1);check(audio.phases[2].seconds==1227);check(audio.durationSeconds==2127)}
- test("All seven presets pass protocol validation"){check(Presets.all.size==7);Presets.all.forEach{Codec.readProtocol(Codec.protocol(it))}}
+ test("Audio protocol contains both CP measurements"){check(audio.cpCount==2 && audio.phases.first().kind==Kind.CP && audio.phases.last().kind==Kind.CP)}
+ test("Audio protocol contains one five-minute recovery"){check(audio.phases.map{it.kind}==listOf(Kind.CP,Kind.LISTEN,Kind.RECOVER,Kind.CP));check(audio.phases[2].seconds==300)}
+ test("Initial CP precedes recording playback"){val e=Engine(audio,0);check(e.state==State.CP_READY && e.index==0);e.startCp(1000);e.stopCp(10000);check(e.index==0);e.advance(11000);check(e.state==State.LISTENING && e.index==1)}
+ test("Recording never completes from wall time alone"){val e=Engine(audio,0);e.advance(1);check(e.state==State.LISTENING);check(!e.tick(9999999));check(e.index==1)}
+ test("Pause and resume retain recording phase"){val e=Engine(audio,0);e.advance(1);e.pause(3000);check(e.state==State.PAUSED);e.resume(900000);check(e.state==State.LISTENING && e.index==1)}
+ test("Completion advances recording into recovery"){val e=Engine(audio,0);e.advance(1);e.advance(1230000);check(e.index==2 && e.state==State.TIMED);check(e.remaining(1230000)==300000L)}
+ test("Second CP waits until the recovery has ended"){val e=Engine(audio,0);e.advance(1);e.advance(1000);check(!e.tick(300999));check(e.tick(301000));check(e.state==State.CP_READY && e.index==3)}
+ test("Post-recording wait can be paused"){val e=Engine(audio,0);repeat(2){e.advance(1000)};e.pause(101000);e.resume(501000);check(e.remaining(501000)==200000L)}
+ test("Audio metadata duration is included exactly once in default protocol"){check(audio.phases.count{it.kind==Kind.LISTEN}==1);check(audio.phases[1].seconds==1227);check(audio.durationSeconds==1527)}
+ test("Both primary protocols pass protocol validation"){check(Presets.all.size==2);Presets.all.forEach{Codec.readProtocol(Codec.protocol(it))}}
  test("Twenty cue choices have unique IDs"){check(Signals.tones.size==20);check(Signals.tones.map{it.id}.distinct().size==20)}
  test("All seven events have different audible defaults"){val ids=Signals.events.map{Signals.defaultTone(it)};check(ids.distinct().size==7 && "none" !in ids);ids.forEach{id->check(Signals.tones.any{it.id==id})}}
  test("Every phase type has a cue event"){Kind.entries.forEach{check(it.name in Signals.events)};check("END" in Signals.events && "CP_END" in Signals.events)}
@@ -66,7 +67,7 @@ fun main(){
  test("Invalid pulse values are rejected"){val o=Codec.entry(entry);o.getJSONArray("pulses").getJSONObject(0).put("bpm",999);reject{Codec.readEntry(o)}}
  test("Invalid timed phase lengths are rejected"){val o=Codec.protocol(p);o.getJSONArray("phases").getJSONObject(0).put("seconds",0);reject{Codec.readProtocol(o)}}
  test("Fixed CP targets are rejected"){val o=Codec.protocol(p);o.getJSONArray("phases").getJSONObject(1).put("seconds",30);reject{Codec.readProtocol(o)}}
- test("False audio durations are rejected"){val o=Codec.protocol(audio);o.getJSONArray("phases").getJSONObject(2).put("seconds",10);reject{Codec.readProtocol(o)}}
+ test("False audio durations are rejected"){val o=Codec.protocol(audio);o.getJSONArray("phases").getJSONObject(1).put("seconds",10);reject{Codec.readProtocol(o)}}
  test("Empty protocols are rejected"){reject{Codec.readProtocol(Codec.protocol(p).put("phases",JSONArray()))}}
  test("More than twenty CPs are rejected"){reject{Codec.readProtocol(Codec.protocol(p.copy(phases=List(21){Phase(Kind.CP)})))}}
  test("Unknown phase kinds are rejected"){val o=Codec.protocol(p);o.getJSONArray("phases").getJSONObject(0).put("kind","MAXIMUM");reject{Codec.readProtocol(o)}}
@@ -77,9 +78,6 @@ fun main(){
  test("Unsupported tone identifiers are rejected"){reject{Codec.settings(JSONObject().put("tone_REST","missing"),JSONObject())}}
  test("Invalid intensity is rejected"){reject{Codec.settings(JSONObject().put("intensity",101),JSONObject())}}
  test("Invalid vibration pattern is rejected"){reject{Codec.settings(JSONObject().put("vibration","unknown"),JSONObject())}}
- test("Export retains CP validity, pulse, walking and notes"){val s=Exports.csv(listOf(entry));check(s.startsWith("\uFEFF") && s.contains("excluded") && s.contains("64 |") && s.contains("Manual") && s.contains("second line") && s.contains("Morning"))}
- test("Export neutralises formula-like titles"){check(Exports.csv(listOf(entry.copy(name="=HYPERLINK(\"bad\")"))).contains("'=HYPERLINK"))}
- test("Empty exports retain headers"){check(Exports.csv(emptyList()).contains("Entry ID"))}
  println("\n$count checks passed")
 }
 

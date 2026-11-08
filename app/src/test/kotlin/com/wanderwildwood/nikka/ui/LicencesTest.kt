@@ -52,7 +52,7 @@ class LicencesTest {
     }
 
     @Test fun theSourceLinkIsTheRepo() {
-        assertEquals("https://github.com/wanderwildwood/nikka", SOURCE_URL)
+        assertEquals("https://github.com/Archetype444/upekkha", SOURCE_URL)
     }
 
     @Test fun gplIsFirstAndEveryTextIsBundled() {
