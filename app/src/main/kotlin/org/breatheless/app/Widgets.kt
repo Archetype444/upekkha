@@ -13,3 +13,4 @@ class Trend(c:Context,private val points:List<DayPoint>):View(c){private val p=P
         fun x(i:Int)=if(points.size==1)(left+right)/2 else left+(right-left)*(points[i].day-first).toFloat()/span
         fun y(i:Int)=bottom-(bottom-top)*(points[i].value/high).toFloat()
         val path=Path();points.indices.forEach{if(it==0)path.moveTo(x(it),y(it))else path.lineTo(x(it),y(it))};p.style=Paint.Style.STROKE;p.strokeWidth=2*d;p.color=P.accent;canvas.drawPath(path,p);p.style=Paint.Style.FILL;points.indices.forEach{canvas.drawCircle(x(it),y(it),3*d,p)};val fmt=java.text.SimpleDateFormat("d MMM",java.util.Locale.getDefault()).apply{timeZone=java.util.TimeZone.getTimeZone("UTC")};p.color=P.muted;canvas.drawText(fmt.format(java.util.Date(first*86400000L)),left,bottom+23*d,p);if(points.size>1){p.textAlign=Paint.Align.RIGHT;canvas.drawText(fmt.format(java.util.Date(points.last().day*86400000L)),right,bottom+23*d,p);p.textAlign=Paint.Align.LEFT}}}
+

@@ -1,16 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <uses-sdk android:minSdkVersion="26" android:targetSdkVersion="35" />
-    <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <!-- No internet: nothing the app holds can leave the phone through it. -->
+
+    <!-- The bells, at the second they are due, with the screen off and the phone in Doze.
+         On Android 12 this is given at install; if it is taken away, the Sit tab says so. -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <!-- A sitting runs as a foreground service with a quiet notification. -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+    <!-- Held only while a bell is sounding, so it is not cut off as the phone sleeps. -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!-- Do Not Disturb while sitting, when switched on in Settings and allowed by the person. -->
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+    <!-- Asked for by Android 13 and later; Android 12, the Kompakt's, has notifications on. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
-    <uses-feature android:name="android.hardware.sensor.stepdetector" android:required="false" />
-    <application android:label="Upekkhā" android:icon="@drawable/ic_launcher" android:theme="@style/AppTheme" android:allowBackup="false" android:fullBackupContent="false" android:enableOnBackInvokedCallback="false" android:debuggable="true" android:supportsRtl="true">
-        <activity android:name=".MainActivity" android:exported="true" android:configChanges="orientation|screenSize|keyboardHidden" android:windowSoftInputMode="adjustResize"><intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter></activity>
-        <service android:name=".PracticeService" android:exported="false" android:foregroundServiceType="specialUse|mediaPlayback"><property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE" android:value="User-started guided breathing timer with phase cues, optional recording playback, and screen-off controls."/></service>
-        <provider android:name=".ExportProvider" android:authorities="org.breatheless.app.exports" android:exported="false" android:grantUriPermissions="true"/>
+    <!-- A buzz at each change of breath, when the breathing cue is set to vibrate. -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <queries>
+        <!-- The other apps that act on selected text, so a field's selection menu can list them
+             behind its ⋮ as every other app of this shop does. -->
+        <intent>
+            <action android:name="android.intent.action.PROCESS_TEXT" />
+            <data android:mimeType="text/plain" />
+        </intent>
+        <!-- DuraSpeed, so Settings shows its row only on a phone that has it. -->
+        <package android:name="com.mediatek.duraspeed" />
+        <!-- Files (Cabinet), so a backup is saved and restored on its e-ink screens when it is there. -->
+        <package android:name="com.wanderwildwood.tana" />
+    </queries>
+
+    <queries><intent><action android:name="android.intent.action.VIEW"/><category android:name="android.intent.category.BROWSABLE"/><data android:scheme="https"/></intent></queries>
+
+    <application
+        android:allowBackup="false"
+        android:dataExtractionRules="@xml/no_backup"
+        android:fullBackupContent="false"
+        android:icon="@drawable/ic_launcher_mudita"
+        android:roundIcon="@drawable/ic_launcher_mudita"
+        android:label="@string/app_name"
+        android:supportsRtl="false"
+        android:theme="@style/Theme.App">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"
+            android:configChanges="keyboardHidden|orientation|screenSize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <service
+            android:name=".sit.SitService"
+            android:exported="false" />
+
+        <receiver
+            android:name=".sit.BellReceiver"
+            android:exported="false" />
+
     </application>
+
 </manifest>

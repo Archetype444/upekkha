@@ -1,19 +1,9 @@
-# Upekkhā maintenance
+# Upekkhā 3 maintenance
 
-Keep applicationId `org.breatheless.app`. All versions after v2 must use the exact signing key in `signing/breatheless-update.p12`, alias `breatheless-update`. The password is in `signing/password.txt`. Never print the password or key bytes. Check the final APK certificate against `signing/identity.json`.
+Preserve applicationId org.breatheless.app and signing certificate SHA-256 a5edb5474ed2435c35c086b1920a0acfdfeac91ad00c7fb6659c9017a44e2268. Key: signing/breatheless-update.p12, alias breatheless-update, password file signing/password.txt. Never print passwords or key bytes. Never generate replacement update keys. Version 3.0 uses versionCode 4. Keys/passwords/private backups must never enter Git or release assets.
 
-The v1 key was lost during workspace maintenance and was absent from the saved v1 project. It cannot be reconstructed from a signed APK or its certificate. Do not claim v1 update compatibility with the v2 key. If the original key is supplied later, resolve which signing series the user has installed before changing identity.
+The app incorporates Nikka (GPL-3.0-only); preserve license/attributions. Target Mudita Kompakt, black on white, MMD controls, no brightness override. No Diary/Learn. Preserve existing tracking data and backup readers. Morning CP has no settling timer. The audio sequence is CP, original recording, 300-second recovery, CP. Unnamed freestyle remembers its settings. Pulse only before/after practice. No manual pause, dim or settings buttons during a practice. Keep phase sound/haptic customization, walking, symptom tracking and unified data.
 
-For each new published version, strictly increase the Android versionCode and update versionName. Keep the signing identity and source backed up with the deliverables, including a private signing backup. If files have been pruned, recover the exact project from an approved source or ask the user to attach it. Never generate a replacement key automatically.
+Push a development checkpoint before and after every significant working stage, not only at completion. Never rely on scratch storage for the only copy of unfinished source. Keep secrets in their separate private backup. Before ending or handing off work, push the latest source checkpoint and record the commit and checks.
 
-Keep the interface dark with a pure black page background, muted text, direct English, and no emojis or marketing taglines. Do not animate a prescribed breathing rhythm. CP remains user-controlled and excluded if interrupted or overextended. Preserve the schema-1 backup reader.
-
-Store the supplied MP3 exactly once as an uncompressed APK asset and play it without extracting a second on-device copy. Wait for real media completion before moving to post-recording phases. Retain independent per-phase and end-of-session sounds, global vibration pattern/intensity, and the physical test controls.
-
-Build with `build-apk.py`. Run the production-core checks, signature verification, alignment and archive checks. Report device testing limitations honestly.
-
-The user-visible brand is Upekkhā (ā is U+0101). Keep ASCII Upekkha filenames for exports, the existing applicationId, and the historical BreatheLess schema-1 backup identifier. Keep original source/publication attributions unchanged. Current release: versionName 2.1, versionCode 3.
-
-## Repository publication
-
-Keep all private signing files and backups out of Git and GitHub release assets. Only the public identity metadata and certificate belong in `signing/` in Git. Restore the existing private key and password locally from the separate backup before building; never generate a replacement. APK files belong in GitHub Releases rather than Git history.
+Build/test with Gradle; verify final package/version/certificate and the single unchanged MP3. Report physical-device testing limitations.

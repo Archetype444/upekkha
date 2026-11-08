@@ -100,3 +100,4 @@ class PracticeService:Service(){
     override fun onDestroy(){handler.removeCallbacksAndMessages(null);if(!finished)checkpoint();voice?.release();ambience?.release();focus?.let{audioManager.abandonAudioFocusRequest(it)};releaseWake();media.release();feedback.release();if(live===this)live=null;super.onDestroy()}
     companion object{var live:PracticeService?=null;var lastResult:String?=null;var failure:String?=null;fun clock(s:Long)="%02d:%02d".format(s.coerceAtLeast(0)/60,s.coerceAtLeast(0)%60)}
 }
+

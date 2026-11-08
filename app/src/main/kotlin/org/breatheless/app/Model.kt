@@ -77,3 +77,4 @@ object Signals {
     fun pattern(style:String):LongArray=when(style){"Short"->longArrayOf(0,100);"Long"->longArrayOf(0,450);"Triple"->longArrayOf(0,90,100,90,100,180);"Rising"->longArrayOf(0,80,110,170,110,300);"Heartbeat"->longArrayOf(0,90,110,210);else->longArrayOf(0,130,110,230)}
     fun amplitudes(pattern:LongArray,intensity:Int,rising:Boolean=false):IntArray{val strength=intensity.coerceIn(0,100)*255/100;val count=pattern.size/2;return pattern.indices.map{if(it%2==0 || strength==0)0 else max(1,if(rising)strength*((it+1)/2)/count.coerceAtLeast(1)else strength)}.toIntArray()}
 }
+

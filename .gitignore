@@ -1,22 +1,17 @@
-# Local tools and build output
-/build/
 /.gradle/
+/build/
+/app/build/
 /local.properties
 /tools/
-__pycache__/
-*.pyc
-
-# Signing credentials are kept in a separate private backup
+*.apk
 *.p12
 *.jks
 *.keystore
 *.key
 *.pem
 /signing/password.txt
-/signing/*.password
+/signing/*.properties
 /private-signing-backup.zip
 *-signing-backup*.zip
-
-# APKs are uploaded to GitHub Releases
-*.apk
-/release-assets/
+__pycache__/
+*.pyc

@@ -22,3 +22,4 @@ class Feedback(private val c:Context){
     fun amplitudeControl()=vibrator?.hasAmplitudeControl()==true
     fun release(){pending=null;pool.release()}
 }
+

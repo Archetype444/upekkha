@@ -40,3 +40,4 @@ class Store private constructor(c:Context){
     fun recover():Boolean{if(!active.baseFile.exists() && !File(active.baseFile.path+".bak").exists())return false;val e=Codec.readEntry(JSONObject(String(active.readFully(),Charsets.UTF_8)));if(entries.none{it.id==e.id})upsert(e.copy(status="Interrupted",comment=(e.comment+"\nSession interrupted. Saved measurements were recovered. No breath hold was resumed.").trim()));active.delete();return true}
     companion object{private var instance:Store?=null;fun get(c:Context)=instance ?:synchronized(this){instance ?:Store(c).also{instance=it}};fun id()=UUID.randomUUID().toString();fun write(f:AtomicFile,text:String){var out:java.io.FileOutputStream?=null;try{out=f.startWrite();out.write(text.toByteArray(Charsets.UTF_8));f.finishWrite(out)}catch(e:Exception){f.failWrite(out);throw e}}}
 }
+
