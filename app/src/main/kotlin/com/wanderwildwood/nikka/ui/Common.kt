@@ -14,6 +14,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import org.breatheless.app.NumberDialog
+import org.breatheless.app.NumberStepper
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -174,7 +177,18 @@ fun Field(
     hint: String? = null,
     number: Boolean = false,
     modifier: Modifier = Modifier,
+    numberRange: IntRange = 0..600,
 ) {
+    if (number) {
+        var choosing by remember { mutableStateOf(false) }
+        val shown = value.ifBlank { hint ?: "0" }
+        Column(modifier.fillMaxWidth().padding(vertical=6.dp)) {
+            TextMMD(text=label,style=MaterialTheme.typography.labelSmall)
+            HouseButton(shown,{choosing=true},Modifier.fillMaxWidth(),compact=true)
+        }
+        if (choosing) NumberDialog(label,shown.toIntOrNull() ?: numberRange.first,numberRange,{choosing=false}) { onValue(it.toString());choosing=false }
+        return
+    }
     Column(modifier.fillMaxWidth().padding(vertical = 6.dp)) {
         TextMMD(text = label, style = MaterialTheme.typography.labelSmall)
         TextFieldMMD(

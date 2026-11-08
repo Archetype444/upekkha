@@ -29,6 +29,8 @@ fun TrackingTab(c: AppState) {
     var morning by remember { mutableStateOf(false) }
     var history by remember { mutableStateOf(false) }
     var selected by remember { mutableStateOf<TrackingRow?>(null) }
+    var remove by remember { mutableStateOf<Entry?>(null) }
+    var problem by remember { mutableStateOf<String?>(null) }
     var add by remember { mutableStateOf(false) }
     val zone = remember { ZoneId.systemDefault() }
     val start = if (days == 0) 0L else c.today.minusDays(days - 1L).atStartOfDay(zone).toInstant().toEpochMilli()
@@ -79,11 +81,19 @@ fun TrackingTab(c: AppState) {
                 item { TextMMD(text = format.format(Instant.ofEpochMilli(entry.timestamp).atZone(zone)), style = MaterialTheme.typography.labelSmall) }
                 item { SettingRow(entry.status, "${entry.duration / 60} min ${entry.duration % 60} sec", null) }
                 entry.cps.forEach { cp -> item { SettingRow(cp.label, cpLabel(cp.seconds) + if (cp.valid) "" else " · excluded", null) } }
+                entry.holds.forEach { hold -> item { SettingRow(hold.label, cpLabel(hold.seconds) + if(hold.valid) "" else " · excluded", null) } }
                 entry.pulses.forEach { pulse -> item { SettingRow(pulse.label, "${pulse.bpm} bpm", null) } }
                 entry.walks.forEachIndexed { index, walk -> item { SettingRow("Hold ${index + 1}", "${walk.steps} steps · ${cpLabel(walk.seconds)}", null) } }
                 entry.symptom?.let { item { SettingRow("Symptom score", "$it / 10", null) } }
             }
+            DialogButton("Delete session") { remove=entry;selected=null }
             DialogButton("Close") { selected = null }
         } }
     }
+    remove?.let { entry -> EInkDialog(onDismiss={remove=null}) {
+        TextMMD(text="Delete this ${entry.name} session? Its measurements will be removed from tracking.")
+        DialogButtons("Cancel","Delete",{remove=null},{runCatching{store.deleteEntry(entry.id);remove=null}.onFailure{problem=it.message}})
+    } }
+    problem?.let { ErrorDialog(it) { problem=null } }
+
 }

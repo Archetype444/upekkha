@@ -47,6 +47,7 @@ fun EInkDialog(
         SideEffect {
             (view.parent as? DialogWindowProvider)?.window?.let { window ->
                 window.setDimAmount(0f)
+                window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
                 // Dimming by nothing still counts as dimming: while a dimming window is up,
                 // Android turns the status-bar icons white, and on the white bar they vanish.
                 window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)

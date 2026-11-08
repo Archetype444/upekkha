@@ -35,7 +35,8 @@ fun CueSettingsScreen(onBack: () -> Unit) {
     fun set(key: String, value: Any) { runCatching { store.settings.put(key, value); store.save(); if (key.startsWith("reminder") || key == "morningReminder") MorningReminder.schedule(context) }.onFailure { problem = it.message } }
     fun open(intent: Intent) { runCatching { context.startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }.onFailure { problem = "The phone could not open this setting." } }
     val permission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted -> set("morningReminder", granted); if (!granted) problem = "Allow notifications in the phone settings to receive Morning CP reminders." }
-    // version participates in the key so values refresh after every saved change.
+    if(dialog=="instructions") { InstructionsScreen { dialog=null }; return }
+    // Read preferences after every saved change.
     key(channel) {
         PracticePage("Sound, vibration and CP", onBack) { padding ->
             PagedColumn(Modifier.padding(padding).fillMaxSize(), contentPadding = PaddingValues(horizontal = 20.dp)) {
@@ -67,22 +68,23 @@ fun CueSettingsScreen(onBack: () -> Unit) {
                     if (enabled && Build.VERSION.SDK_INT >= 33) permission.launch(Manifest.permission.POST_NOTIFICATIONS) else set("morningReminder", enabled)
                 } }
                 item { SettingRow("Reminder time", "%02d:%02d".format(store.settings.optInt("reminderHour", 8), store.settings.optInt("reminderMinute", 0))) {
-                    TimePickerDialog(context, android.R.style.Theme_Material_Light_Dialog_Alert, { _, hour, minute -> set("reminderHour", hour); set("reminderMinute", minute) }, store.settings.optInt("reminderHour", 8), store.settings.optInt("reminderMinute", 0), DateFormat.is24HourFormat(context)).show()
+                    dialog = "reminderTime"
                 } }
                 if (!exact) item { SettingRow("Allow exact reminders", "Without this permission Android may delay the reminder.") { open(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM, Uri.parse("package:${context.packageName}"))) } }
                 item { SettingRow("Notification settings", null) { open(Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)) } }
-                item { SettingRow("Practice safety", null) { dialog = "safety" } }
+                item { SettingRow("Instructions", null) { dialog = "instructions" } }
             }
         }
     }
     when (val choice = dialog) {
+        "reminderTime" -> ReminderTimeDialog(store.settings.optInt("reminderHour",8),store.settings.optInt("reminderMinute",0),{dialog=null}) { hour,minute->set("reminderHour",hour);set("reminderMinute",minute);dialog=null }
         "channel" -> OptionsDialog("Sound effects channel", SoundRoute.names.map { it to it }, channel, { set("fxChannel", it) }, { dialog = null })
         "vibration" -> OptionsDialog("Vibration style", Signals.styles.map { it to it }, store.str("vibration", "Double"), { set("vibration", it); feedback.vibrate(it) }, { dialog = null })
         "ambience" -> OptionsDialog("Ambience", listOf("Off", "Wind", "Fireplace").map { it to it }, store.str("ambience", "Off"), { set("ambience", it) }, { dialog = null })
         "cueVolume", "intensity", "volume" -> PercentDialog(when (choice) { "cueVolume" -> "Tone volume"; "intensity" -> "Vibration intensity"; else -> "Ambience volume" }, store.int(choice, 45), { dialog = null }) {
             set(choice, it); if (choice == "intensity") feedback.vibrate(strength = it) else if (choice == "cueVolume") feedback.tone("bell"); dialog = null
         }
-        "safety" -> SafetyDialog({ dialog = null }, { dialog = null })
+
         in Signals.events -> {
             val event = choice!!
             val v by store.version.collectAsState()
@@ -102,10 +104,18 @@ fun CueSettingsScreen(onBack: () -> Unit) {
 
 @Composable
 fun PercentDialog(title: String, initial: Int, onDismiss: () -> Unit, onSet: (Int) -> Unit) {
-    var value by remember { mutableStateOf(initial.toString()) }; var invalid by remember { mutableStateOf(false) }
-    EInkDialog(onDismiss = onDismiss) {
-        Field("$title (%)", value, { value = it.filter(Char::isDigit).take(3) }, number = true)
-        if (invalid) TextMMD(text = "Enter a percentage from 0 to 100.")
-        DialogButtons("Cancel", "Set", onDismiss, { val n = value.toIntOrNull(); if (n == null || n !in 0..100) invalid = true else onSet(n) })
+    NumberDialog(title,initial,0..100,onDismiss,onSet)
+}
+
+@Composable
+fun ReminderTimeDialog(initialHour:Int,initialMinute:Int,onDismiss:()->Unit,onSet:(Int,Int)->Unit) {
+    var hour by remember { mutableIntStateOf(initialHour) };var minute by remember { mutableIntStateOf(initialMinute) };var pick by remember { mutableStateOf<String?>(null) }
+    EInkDialog(onDismiss=onDismiss) {
+        TextMMD(text="Reminder time")
+        SettingRow("Hour","%02d".format(hour)){pick="hour"}
+        SettingRow("Minute","%02d".format(minute)){pick="minute"}
+        DialogButtons("Cancel","Set",onDismiss,{onSet(hour,minute)})
     }
+    if(pick=="hour") OptionsDialog("Hour",(0..23).map{it to "%02d".format(it)},hour,{hour=it},{pick=null})
+    if(pick=="minute") OptionsDialog("Minute",(0..59).map{it to "%02d".format(it)},minute,{minute=it},{pick=null})
 }

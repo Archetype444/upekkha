@@ -193,12 +193,12 @@ private fun OtherBreathDialog(breath: Breath, onSet: (Breath) -> Unit, onDismiss
     EInkDialog(onDismiss = onDismiss) {
         TextMMD(text = stringResource(R.string.breath_other_title), style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            Field(stringResource(R.string.breath_field_in), inText, { inText = digits(it) }, hint = breath.inSec.toString(), number = true, modifier = Modifier.weight(1f))
-            Field(stringResource(R.string.breath_field_hold), holdText, { holdText = digits(it) }, hint = breath.holdSec.toString(), number = true, modifier = Modifier.weight(1f))
+            Field(stringResource(R.string.breath_field_in), inText, { inText = digits(it) }, hint = breath.inSec.toString(), number = true, modifier = Modifier.weight(1f), numberRange = 0..20)
+            Field(stringResource(R.string.breath_field_hold), holdText, { holdText = digits(it) }, hint = breath.holdSec.toString(), number = true, modifier = Modifier.weight(1f), numberRange = 0..20)
         }
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            Field(stringResource(R.string.breath_field_out), outText, { outText = digits(it) }, hint = breath.outSec.toString(), number = true, modifier = Modifier.weight(1f))
-            Field(stringResource(R.string.breath_field_rest), restText, { restText = digits(it) }, hint = breath.restSec.toString(), number = true, modifier = Modifier.weight(1f))
+            Field(stringResource(R.string.breath_field_out), outText, { outText = digits(it) }, hint = breath.outSec.toString(), number = true, modifier = Modifier.weight(1f), numberRange = 0..20)
+            Field(stringResource(R.string.breath_field_rest), restText, { restText = digits(it) }, hint = breath.restSec.toString(), number = true, modifier = Modifier.weight(1f), numberRange = 0..20)
         }
         if (tried && value == null) {
             TextMMD(text = stringResource(R.string.breath_other_range, Breath.MAX_SEC), style = MaterialTheme.typography.labelSmall)

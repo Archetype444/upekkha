@@ -22,9 +22,12 @@ class Prefs(context: Context) {
         set(v) = p.edit().putInt("warmup", v).apply()
 
     /** Minutes between bells inside a sitting; 0 for none. */
+    var intervalSec: Int
+        get() = p.getInt("interval_seconds", p.getInt("interval", 0) * 60)
+        set(v) = p.edit().putInt("interval_seconds", v).putInt("interval", v / 60).apply()
     var intervalMin: Int
-        get() = p.getInt("interval", 0)
-        set(v) = p.edit().putInt("interval", v).apply()
+        get() = intervalSec / 60
+        set(v) { intervalSec = v * 60 }
 
     /** The Sit tab set for breathing rather than sitting. */
     var breathe: Boolean

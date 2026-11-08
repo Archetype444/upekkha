@@ -163,9 +163,9 @@ fun SessionDialog(c: AppState, s: Session?, onDismiss: () -> Unit) {
                     }
                 }
                 Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.Bottom) {
-                    Field(stringResource(R.string.log_hour), hour, { hour = it.filter(Char::isDigit).take(2) }, number = true, modifier = Modifier.weight(1f))
+                    Field(stringResource(R.string.log_hour), hour, { hour = it.filter(Char::isDigit).take(2) }, number = true, modifier = Modifier.weight(1f), numberRange = if (is24) 0..23 else 1..12)
                     Spacer(Modifier.width(8.dp))
-                    Field(stringResource(R.string.log_minute), minute, { minute = it.filter(Char::isDigit).take(2) }, number = true, modifier = Modifier.weight(1f))
+                    Field(stringResource(R.string.log_minute), minute, { minute = it.filter(Char::isDigit).take(2) }, number = true, modifier = Modifier.weight(1f), numberRange = 0..59)
                     if (!is24) {
                         Spacer(Modifier.width(8.dp))
                         // One press turns AM to PM and back.
@@ -177,7 +177,7 @@ fun SessionDialog(c: AppState, s: Session?, onDismiss: () -> Unit) {
                     }
                 }
                 Field(
-                    stringResource(R.string.log_length), minutes, { minutes = it.filter(Char::isDigit).take(3) }, number = true,
+                    stringResource(R.string.log_length), minutes, { minutes = it.filter(Char::isDigit).take(3) }, number = true, numberRange = 1..HAND_MAX_MIN,
                 )
                 problem?.let { TextMMD(text = it, style = MaterialTheme.typography.labelSmall, modifier = Modifier.padding(top = 4.dp)) }
                 Spacer(Modifier.height(8.dp))

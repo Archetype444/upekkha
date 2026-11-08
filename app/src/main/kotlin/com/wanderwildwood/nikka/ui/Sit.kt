@@ -1,5 +1,7 @@
 package com.wanderwildwood.nikka.ui
 
+import org.breatheless.app.Durations
+import org.breatheless.app.NumberDialog
 import android.app.Activity
 import android.app.AlarmManager
 import android.content.Intent
@@ -63,7 +65,7 @@ private val WARMUPS = listOf(0, 10, 30, 60, 120)
 // Breathing as the warm-up, in minutes. In the Warm-up choices these stand as their negatives,
 // beside the timed warm-ups' seconds.
 private val BREATHE_FIRST = listOf(2, 5)
-private val INTERVALS = listOf(0, 5, 10, 15, 20, 30)
+private val INTERVALS = Durations.interval
 
 /** The sitting as it will be set going: its length, a warm-up, an interval bell, and Start. */
 @Composable
@@ -75,7 +77,7 @@ fun SitTab(c: AppState) {
     val warmup = remember(v) { prefs.warmupSec }
     val breatheFirst = remember(v) { prefs.breatheFirstMin }
     val breath = remember(v) { prefs.breath }
-    val interval = remember(v) { prefs.intervalMin }
+    val interval = remember(v) { prefs.intervalSec }
     var pickOther by remember { mutableStateOf(false) }
     var pickWarmup by remember { mutableStateOf(false) }
     var pickInterval by remember { mutableStateOf(false) }
@@ -161,7 +163,7 @@ fun SitTab(c: AppState) {
     }
     if (pickInterval) {
         OptionsDialog(stringResource(R.string.sit_interval), INTERVALS.map { it to intervalName(it) }, interval,
-            onPick = { prefs.intervalMin = it; v++ }, onDismiss = { pickInterval = false })
+            onPick = { prefs.intervalSec = it; v++ }, onDismiss = { pickInterval = false })
     }
 }
 
@@ -179,30 +181,13 @@ private fun warmupName(sec: Int): String = when {
 }
 
 @Composable
-private fun intervalName(min: Int): String =
-    if (min == 0) stringResource(R.string.none) else pluralStringResource(R.plurals.every_minutes, min, min.toString())
+private fun intervalName(seconds: Int): String =
+    if (seconds == 0) stringResource(R.string.none) else "Every ${Durations.label(seconds)}"
 
 @Composable
 private fun OtherLengthDialog(minutes: Int, onSet: (Int) -> Unit, onDismiss: () -> Unit) {
-    // Empty, with the length now as its hint: typing replaces it rather than adding to it.
-    var text by remember { mutableStateOf("") }
-    var tried by remember { mutableStateOf(false) }
-    val value = (text.trim().toIntOrNull() ?: minutes).takeIf { it in 1..MAX_MINUTES }
-    EInkDialog(onDismiss = onDismiss) {
-        TextMMD(text = stringResource(R.string.sit_other_title), style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
-        Field(stringResource(R.string.sit_other_minutes), text, { text = it.filter(Char::isDigit).take(3) }, hint = minutes.toString(), number = true)
-        if (tried && value == null) {
-            TextMMD(text = stringResource(R.string.sit_other_range, MAX_MINUTES), style = MaterialTheme.typography.labelSmall)
-        }
-        Spacer(Modifier.height(8.dp))
-        DialogButton(stringResource(R.string.set), filled = true) {
-            if (value != null) { onSet(value); onDismiss() } else tried = true
-        }
-        DialogButton(stringResource(R.string.cancel), onClick = onDismiss)
-    }
+    NumberDialog("Sitting length (min)",minutes,1..MAX_MINUTES,onDismiss){onSet(it);onDismiss()}
 }
-
-private const val MAX_MINUTES = 600
 
 /**
  * While you sit: the screen dark, its light down, and nothing on it that changes, so the panel is
@@ -268,11 +253,6 @@ fun EndScreen(c: AppState, id: Long) {
         LaunchedEffect(Unit) { Sitting.noteDone(context) }
         return
     }
-    // Meditation's rest days keep its streak, as they do on its history page.
-    val streak = remember(c.version, c.today) {
-        val rests = c.store.habits().firstOrNull { it.builtin }?.let { c.store.rests(it.id) }.orEmpty()
-        Stats.dailyStreak(Stats.sittingDays(c.store.sessions(), ZoneId.systemDefault()), c.today, rests)
-    }
     Scaffold(
         containerColor = MaterialTheme.colorScheme.surface,
         topBar = { TopAppBarMMD(title = { TextMMD(text = stringResource(R.string.app_name)) }) },
@@ -288,10 +268,6 @@ fun EndScreen(c: AppState, id: Long) {
                 text = stringResource(R.string.end_span, Words.time(context, session.start), Words.time(context, session.start + (session.satSec * 1000L))),
                 style = MaterialTheme.typography.bodyMedium,
             )
-            if (streak > 1) {
-                Spacer(Modifier.height(4.dp))
-                TextMMD(text = Words.streak(context, streak, weeks = false), style = MaterialTheme.typography.bodyMedium)
-            }
             Spacer(Modifier.height(20.dp))
             Spacer(Modifier.weight(1f))
             ButtonMMD(onClick = done, modifier = Modifier.fillMaxWidth().height(56.dp).testTag("end_done")) {

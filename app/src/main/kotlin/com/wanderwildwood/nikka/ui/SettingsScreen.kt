@@ -38,6 +38,8 @@ import java.time.LocalDate
 @Composable
 fun SettingsScreen(c: AppState, onBack: () -> Unit, onMore: () -> Unit) {
     BackHandler { onBack() }
+    var instructions by remember { mutableStateOf(false) }
+    if(instructions) { org.breatheless.app.InstructionsScreen { instructions=false }; return }
     val context = LocalContext.current
     val prefs = remember { Prefs(context) }
     var v by remember { mutableIntStateOf(0) }
@@ -111,7 +113,8 @@ fun SettingsScreen(c: AppState, onBack: () -> Unit, onMore: () -> Unit) {
                     }
                 }
             }
-            item { SettingRow("Sound, vibration and CP", "Phase cues, audio channel and morning reminder", onMore) }
+            item { SettingRow("Instructions", "Buteyko exercise instructions") { instructions=true } }
+            item { SettingRow("Sound, vibration and CP", "Phase cues, instructions and morning reminder", onMore) }
             item(key = "bell") {
                 SettingRow(
                     stringResource(R.string.settings_try_bell),
@@ -128,12 +131,6 @@ fun SettingsScreen(c: AppState, onBack: () -> Unit, onMore: () -> Unit) {
                     prefs.doNotDisturb = on
                     if (on && !policy) open(Intent(AndroidSettings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS))
                     v++
-                }
-            }
-            item(key = "streaks") {
-                SwitchRow(stringResource(R.string.settings_show_streaks), showStreaks, stringResource(R.string.settings_show_streaks_note)) { on ->
-                    prefs.showStreaks = on
-                    showStreaks = on
                 }
             }
             item(key = "backup") { Heading(stringResource(R.string.settings_backup_heading)) }

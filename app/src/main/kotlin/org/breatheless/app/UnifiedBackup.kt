@@ -10,7 +10,7 @@ import java.io.InputStream
 
 object UnifiedBackup {
     private const val MAX_BYTES = 32 * 1024 * 1024
-    private val integers = mapOf("minutes" to 1..600, "warmup" to 0..120, "interval" to 0..30,
+    private val integers = mapOf("minutes" to 1..600, "warmup" to 0..120, "interval" to 0..30, "interval_seconds" to 0..1800,
         "breath_in" to 1..20, "breath_hold" to 0..20, "breath_out" to 1..20, "breath_rest" to 0..20,
         "breath_minutes" to 1..15, "breath_cue" to 0..3, "breathe_first" to 0..5)
     private val booleans = setOf("breathe", "show_streaks", "dnd")
@@ -30,7 +30,7 @@ object UnifiedBackup {
         val settings = JSONObject()
         integers.keys.forEach { if (prefs.contains(it)) settings.put(it, prefs.getInt(it, 0)) }
         booleans.forEach { if (prefs.contains(it)) settings.put(it, prefs.getBoolean(it, false)) }
-        return JSONObject().put("format", "Upekkha").put("schemaVersion", 3)
+        return JSONObject().put("format", "Upekkha").put("schemaVersion", 4)
             .put("practice", JSONObject(MeditationBackup.write(MeditationStore.get(context))))
             .put("buteyko", Store.get(context).json()).put("preferences", settings).toString(2)
     }
@@ -42,7 +42,7 @@ object UnifiedBackup {
         when (root.optString("format")) {
             "BreatheLess" -> { legacy.restore(text); MorningReminder.schedule(context); return }
             "nikka-backup" -> { meditation.replaceAll(MeditationBackup.read(text)); return }
-            "Upekkha" -> require(root.getInt("schemaVersion") == 3) { "Unsupported Upekkhā backup version." }
+            "Upekkha" -> require(root.getInt("schemaVersion") in 3..4) { "Unsupported Upekkhā backup version." }
             else -> error("This is not a supported practice backup.")
         }
         // Parse every section before either store is changed.

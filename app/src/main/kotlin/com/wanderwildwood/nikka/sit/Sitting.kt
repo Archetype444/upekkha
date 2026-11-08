@@ -54,7 +54,7 @@ object Sitting {
             start = System.currentTimeMillis(),
             warmupSec = if (warmup) prefs.warmupSec else 0,
             plannedSec = prefs.minutes * 60,
-            intervalSec = prefs.intervalMin * 60,
+            intervalSec = prefs.intervalSec,
         )
         prefs.running = plan
         prefs.justEnded = -1
@@ -99,7 +99,7 @@ object Sitting {
         val pi = alarmIntent(context, next.index)
         if (!am.canScheduleExactAlarms()) {
             am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, next.at, pi)
-        } else if (next.kind == Plan.Kind.END) {
+        } else if (next.kind == Plan.Kind.END || plan.intervalSec in 1..120) {
             am.setAlarmClock(AlarmManager.AlarmClockInfo(next.at, openApp(context)), pi)
         } else {
             am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, next.at, pi)

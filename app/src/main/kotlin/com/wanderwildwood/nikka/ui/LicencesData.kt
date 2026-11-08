@@ -12,6 +12,7 @@ val LICENCE_RAW: List<Pair<String, Int>> = listOf(
     "gpl" to R.raw.gpl_3_0,
     "apache" to R.raw.apache_2_0,
     "ofl" to R.raw.ofl_1_1,
+    "mit" to R.raw.adam_breathe_less_mit,
 )
 
 @Composable

@@ -50,7 +50,7 @@ class Store private constructor(c:Context){
     fun saveFreestyle(protocol:Protocol){Codec.readProtocol(Codec.protocol(protocol));settings.put("freestyleV4",Codec.protocol(protocol.copy(id="freestyle",name="Freestyle")));save()}
     fun saveTemplate(protocol:Protocol){Codec.readProtocol(Codec.protocol(protocol));val index=protocols.indexOfFirst{it.id==protocol.id};if(index<0)protocols.add(protocol)else protocols[index]=protocol;save()}
     fun deleteTemplate(id:String){protocols.removeAll{it.id==id};save()}
-    fun deleteEntry(id:String){entries.removeAll{it.id==id};save()}
+    fun deleteEntry(id:String){val before=entries.toList();entries.removeAll{it.id==id};try{save()}catch(e:Exception){entries.clear();entries.addAll(before);throw e}}
     fun bool(key:String,default:Boolean=true)=settings.optBoolean(key,default)
     fun int(key:String,default:Int)=settings.optInt(key,default).coerceIn(0,100)
     fun str(key:String,default:String)=settings.optString(key,default)

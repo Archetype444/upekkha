@@ -1,0 +1,14 @@
+{
+  "uniqueId": "adam-breathe-less",
+  "name": "Breathe Less exercise sequences and instructions",
+  "description": "Diminished Breathing and Classical Buteyko, ported from Adam Shand\u2019s breathe-less, commit 0612c637dc9a8cf4c685217ce4ec9f526f615b8e. Original timing/order retained; audio replaced by Upekkh\u0101 cues.",
+  "developers": [
+    {
+      "name": "Adam Shand"
+    }
+  ],
+  "website": "https://github.com/adamshand/breathe-less",
+  "licenses": [
+    "MIT"
+  ]
+}
