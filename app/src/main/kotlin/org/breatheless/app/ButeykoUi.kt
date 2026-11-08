@@ -55,7 +55,7 @@ fun ButeykoTab() {
     var pulse by remember { mutableStateOf(false) }
     var problem by remember { mutableStateOf<String?>(null) }
     fun launch(protocol: Protocol, bpm: Int? = null) { runCatching { ButeykoActions.start(context, protocol, bpm) }.onFailure { problem = it.message } }
-    fun afterSafety() { if (store.bool("pulsePrompt", false)) pulse = true else pending?.let { launch(it) } }
+    fun afterSafety() { if (pending?.id != "morning" && store.bool("pulsePrompt", false)) pulse = true else pending?.let { launch(it) } }
     fun request(protocol: Protocol) { pending = protocol; if (!store.bool("safetyAccepted", false)) safety = true else afterSafety() }
     BackHandler(enabled = page != "home") { page = "home" }
     when (page) {

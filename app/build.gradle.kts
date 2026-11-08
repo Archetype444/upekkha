@@ -25,7 +25,7 @@ android {
     // A real keystore in signing/ signs every build type when it is present, so the
     // very first install is already release-signed and a later update can never hit
     // INSTALL_FAILED_UPDATE_INCOMPATIBLE. It is gitignored, and there is no fallback:
-    // a fresh clone builds an unsigned release APK, which will not install anywhere.
+    // packaging requires restoring the original signing backup.
     val keyFile = rootProject.file("signing/breatheless-update.p12")
     val passwordFile = rootProject.file("signing/password.txt")
     val realSigningConfig = if (keyFile.isFile && passwordFile.isFile) {

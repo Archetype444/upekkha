@@ -1,0 +1,20 @@
+{
+  "uniqueId": "ambientsounds-media",
+  "name": "Wind and fireplace ambience",
+  "description": "Loop edits from Muges/ambientsounds. Wind: felix.blume, Freesound 139337. Fireplace: inchadney, Freesound 132534. CC0 1.0.",
+  "developers": [
+    {
+      "name": "felix.blume"
+    },
+    {
+      "name": "inchadney"
+    },
+    {
+      "name": "Muges/ambientsounds contributors"
+    }
+  ],
+  "website": "https://github.com/Muges/ambientsounds",
+  "licenses": [
+    "CC0-1.0"
+  ]
+}

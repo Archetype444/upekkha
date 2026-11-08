@@ -1,4 +1,4 @@
-Upekkhā 2.1
+Upekkhā 3.0
 
 Mindfulness Buteyko — Marilleke Vrancken
 MP3 supplied by the user for this version. Bundled unchanged, once, as assets/audio/mindfulness.mp3.
@@ -14,3 +14,8 @@ These are the collection's loop edits, without further conversion.
 Nineteen phase tones: original synthesized PCM WAVs for Upekkhā.
 Kotlin runtime: Apache License 2.0; notices in assets/licenses.
 
+
+Upekkhā 3.0 incorporates Nikka, copyright 2026 wander wildwood, GNU GPL version 3.
+https://github.com/wanderwildwood/nikka
+Mudita MMD and AndroidX: Apache License 2.0. Lato: SIL Open Font License 1.1.
+Original notices and full license texts are included in the app and source.
