@@ -71,6 +71,7 @@ class KompaktUiTest {
     @Test fun sittingOffersShortIntervalsAndPersistsSeconds() {
         compose.onNodeWithText("Sit").performClick()
         compose.onNodeWithTag("start").assertIsDisplayed()
+        compose.onRoot().performTouchInput { swipeUp() }
         reach("Interval bell").performClick()
         compose.onNodeWithText("Every 15 sec").assertIsDisplayed().performClick()
         compose.onNodeWithText("Every 15 sec").assertIsDisplayed()
