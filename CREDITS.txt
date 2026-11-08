@@ -1,0 +1,15 @@
+Upekkhā 2.1
+
+Mindfulness Buteyko — Marilleke Vrancken
+MP3 supplied by the user for this version. Bundled unchanged, once, as assets/audio/mindfulness.mp3.
+The recording is distinct from the open-source ambience collection.
+
+Ambience: https://github.com/Muges/ambientsounds
+wind.ogg: felix.blume, Freesound 139337, CC0 1.0.
+https://freesound.org/people/felix.blume/sounds/139337/
+fireplace.ogg: inchadney, Fireplace.wav, Freesound 132534, CC0 1.0.
+https://freesound.org/people/inchadney/sounds/132534/
+These are the collection's loop edits, without further conversion.
+
+Nineteen phase tones: original synthesized PCM WAVs for Upekkhā.
+Kotlin runtime: Apache License 2.0; notices in assets/licenses.

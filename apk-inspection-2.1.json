@@ -1,0 +1,14 @@
+{
+  "applicationId": "org.breatheless.app",
+  "displayName": "Upekkhā",
+  "versionCode": 3,
+  "versionName": "2.1",
+  "certificateSha256": "a5edb5474ed2435c35c086b1920a0acfdfeac91ad00c7fb6659c9017a44e2268",
+  "apkSha256": "c0ab7f69f06cb6c54827d42d3e7e533748b7ac29ffe1841d42fba3eda6eb7625",
+  "apkSizeBytes": 27273531,
+  "archiveIntegrity": "passed",
+  "v2RecordingAndResourceComparison": "unchanged",
+  "mp3Copies": 1,
+  "mp3StoredUncompressed": true,
+  "deviceInstallationTested": false
+}
