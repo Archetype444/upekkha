@@ -4,10 +4,10 @@
   "keystore": "breatheless-update.p12",
   "passwordFile": "password.txt",
   "firstVersionCode": 2,
-  "lastVersionCode": 4,
+  "lastVersionCode": 5,
   "v1CertificateSha256": "c75e52e277fcf9cc9c0d5ed3165a629445ac1a25f16f5254fd2301a36f588914",
   "v1KeyAvailable": false,
   "rule": "All future builds must use this keystore and a strictly increasing versionCode. Do not generate a replacement key silently.",
   "certificateSha256": "a5edb5474ed2435c35c086b1920a0acfdfeac91ad00c7fb6659c9017a44e2268",
-  "displayName": "Upekkhā"
+  "displayName": "Upekkh\u0101"
 }
