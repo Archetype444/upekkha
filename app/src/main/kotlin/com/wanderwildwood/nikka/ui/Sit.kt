@@ -214,22 +214,6 @@ fun SessionScreen(plan: Plan) {
     val context = LocalContext.current
     val activity = context as? Activity
     BackHandler { activity?.moveTaskToBack(true) }
-    DisposableEffect(Unit) {
-        val window = activity?.window
-        val before = window?.attributes?.screenBrightness
-        val bar = window?.statusBarColor
-        window?.attributes = window?.attributes?.apply { screenBrightness = 0f }
-        // The status bar goes dark with the rest, its icons light.
-        window?.statusBarColor = android.graphics.Color.BLACK
-        window?.let { androidx.core.view.WindowCompat.getInsetsController(it, it.decorView).isAppearanceLightStatusBars = false }
-        onDispose {
-            if (bar != null) window.statusBarColor = bar
-            window?.let { androidx.core.view.WindowCompat.getInsetsController(it, it.decorView).isAppearanceLightStatusBars = true }
-            window?.attributes = window?.attributes?.apply {
-                screenBrightness = before ?: WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
-            }
-        }
-    }
     var warming by remember(plan) { mutableStateOf(plan.warmingUp(System.currentTimeMillis())) }
     LaunchedEffect(plan, warming) {
         if (warming) {
@@ -240,7 +224,7 @@ fun SessionScreen(plan: Plan) {
     Box(
         Modifier
             .fillMaxSize()
-            .background(Color.Black)
+            .background(Color.White)
             .testTag("session")
             .pointerInput(plan) { detectTapGestures(onLongPress = { Sitting.endEarly(context) }) },
     ) {
@@ -248,20 +232,20 @@ fun SessionScreen(plan: Plan) {
             TextMMD(
                 text = stringResource(if (warming) R.string.session_warming else R.string.session_sitting),
                 style = MaterialTheme.typography.titleLarge,
-                color = Color.White,
+                color = Color.Black,
             )
             Spacer(Modifier.height(8.dp))
             TextMMD(
                 text = if (warming) stringResource(R.string.session_first_bell, Words.time(context, plan.sitStart))
                 else stringResource(R.string.session_until, Words.time(context, plan.end)),
                 style = MaterialTheme.typography.bodyLarge,
-                color = Color.White,
+                color = Color.Black,
             )
         }
         TextMMD(
             text = stringResource(R.string.session_hold),
             style = MaterialTheme.typography.labelSmall,
-            color = Color.White,
+            color = Color.Black,
             textAlign = TextAlign.Center,
             modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 32.dp),
         )
@@ -309,7 +293,6 @@ fun EndScreen(c: AppState, id: Long) {
                 TextMMD(text = Words.streak(context, streak, weeks = false), style = MaterialTheme.typography.bodyMedium)
             }
             Spacer(Modifier.height(20.dp))
-            Field(stringResource(R.string.end_note), note, { note = it.replace('\n', ' ').take(200) }, hint = stringResource(R.string.end_note_hint))
             Spacer(Modifier.weight(1f))
             ButtonMMD(onClick = done, modifier = Modifier.fillMaxWidth().height(56.dp).testTag("end_done")) {
                 TextMMD(text = stringResource(R.string.done), style = MaterialTheme.typography.titleMedium)

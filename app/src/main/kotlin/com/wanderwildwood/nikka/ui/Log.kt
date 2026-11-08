@@ -112,7 +112,7 @@ fun LogTab(c: AppState) {
  * a note. A new sitting is logged as sat in full, and ticks meditation for its day.
  */
 @Composable
-private fun SessionDialog(c: AppState, s: Session?, onDismiss: () -> Unit) {
+fun SessionDialog(c: AppState, s: Session?, onDismiss: () -> Unit) {
     val context = LocalContext.current
     val zone = ZoneId.systemDefault()
     val is24 = remember { DateFormat.is24HourFormat(context) }
@@ -179,7 +179,6 @@ private fun SessionDialog(c: AppState, s: Session?, onDismiss: () -> Unit) {
                 Field(
                     stringResource(R.string.log_length), minutes, { minutes = it.filter(Char::isDigit).take(3) }, number = true,
                 )
-                Field(stringResource(R.string.end_note), note, { note = it.replace('\n', ' ').take(200) }, hint = stringResource(R.string.end_note_hint))
                 problem?.let { TextMMD(text = it, style = MaterialTheme.typography.labelSmall, modifier = Modifier.padding(top = 4.dp)) }
                 Spacer(Modifier.height(8.dp))
                 DialogButtons(

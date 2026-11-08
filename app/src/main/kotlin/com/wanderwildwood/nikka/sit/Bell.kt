@@ -45,10 +45,7 @@ object Bell {
         main.postDelayed({ if (!finished) { runCatching { player.release() }; done() } }, HOLD_MS)
         try {
             player.setAudioAttributes(
-                AudioAttributes.Builder()
-                    .setUsage(AudioAttributes.USAGE_ALARM)
-                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                    .build(),
+                org.breatheless.app.SoundRoute.attributes(app),
             )
             app.resources.openRawResourceFd(if (end) R.raw.bowl_end else R.raw.bowl).use {
                 player.setDataSource(it.fileDescriptor, it.startOffset, it.length)

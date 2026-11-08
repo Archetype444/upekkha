@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Practice</string>
+    <string name="app_name">Upekkhā</string>
 
     <!-- Screen-reader labels for the top-bar and grid buttons -->
     <string name="cd_back">Back</string>
@@ -31,7 +31,7 @@
     <!-- The tabs (Breathe is with the breathing strings below) -->
     <string name="tab_sit">Sit</string>
     <string name="tab_today">Today</string>
-    <string name="tab_log">Log</string>
+    <string name="tab_log">Track</string>
 
     <!-- ============================================================ -->
     <!-- Sit tab -->
@@ -60,7 +60,7 @@
         <item quantity="one">Every minute</item>
         <item quantity="other">Every %1$s minutes</item>
     </plurals>
-    <string name="sit_exact">Bells cannot ring on time: exact alarms are switched off for Practice</string>
+    <string name="sit_exact">Bells cannot ring on time: exact alarms are switched off for Upekkhā</string>
     <string name="sit_exact_allow">Allow them</string>
     <string name="sit_start">Start</string>
 
@@ -215,12 +215,12 @@
 
     <string name="settings_title">Settings</string>
     <!-- On a Kompakt: DuraSpeed shuts apps down, which cancels the bells. Pressing it opens DuraSpeed's App info, where Open shows its list -->
-    <string name="settings_duraspeed">The phone\'s DuraSpeed setting can shut Practice down, and the bells with it. Open DuraSpeed, tap Open, and switch Practice on.</string>
+    <string name="settings_duraspeed">The phone\'s DuraSpeed setting can shut Upekkhā down, and the bells with it. Open DuraSpeed, tap Open, and switch Upekkhā on.</string>
     <string name="settings_duraspeed_open">Open DuraSpeed</string>
-    <!-- Under the DuraSpeed row: pressing it says Practice is now switched on there -->
+    <!-- Under the DuraSpeed row: pressing it says Upekkhā is now switched on there -->
     <string name="settings_duraspeed_done">I have done this</string>
     <string name="settings_try_bell">Try the bell</string>
-    <string name="settings_bell_volume">It rings at the phone\'s alarm volume</string>
+    <string name="settings_bell_volume">Uses the selected sound-effects channel</string>
     <string name="settings_bell_ringing">Ringing</string>
     <string name="settings_dnd">Do not disturb while sitting</string>
     <string name="settings_dnd_note">Alarms only, so the bells still ring</string>
@@ -232,20 +232,20 @@
     <string name="backup_saved">Saved.</string>
     <string name="backup_not_saved">The backup could not be written there.</string>
     <string name="restore_done">Restored.</string>
-    <string name="restore_not_ours">That file is not a Practice backup. Nothing was changed.</string>
+    <string name="restore_not_ours">That file is not a Upekkhā backup. Nothing was changed.</string>
 
     <!-- ============================================================ -->
     <!-- About -->
 
-    <string name="about_title">Practice %1$s</string>
+    <string name="about_title">Upekkhā %1$s</string>
     <string name="about_what">A meditation timer and a habit tracker. What you log stays on the phone: the app has no internet permission.</string>
     <string name="about_sound">Bowl sound made for this app, GPL v3</string>
-    <string name="about_feed_the_llamas">Feed the llamas</string>
+    <string name="about_feed_the_llamas">Support Nikka</string>
     <string name="about_close">Close</string>
     <string name="licences_title">Licenses</string>
     <string name="licences_source_head">Source code</string>
     <string name="licences_no_text">%s needs no license text here.</string>
-    <string name="licences_licence">Practice is free software: GPL-3.0-only, copyright wander wildwood. What it is built on keeps its own licenses, listed below.</string>
+    <string name="licences_licence">Upekkhā is free software: GPL-3.0-only, copyright wander wildwood. What it is built on keeps its own licenses, listed below.</string>
     <string name="licences_back">Back</string>
     <string name="about_no_browser_address">No browser is installed. The address is %1$s.</string>
     <string name="about_privacy_head">Privacy</string>

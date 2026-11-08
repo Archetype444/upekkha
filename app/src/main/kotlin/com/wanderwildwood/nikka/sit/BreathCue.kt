@@ -23,10 +23,7 @@ class BreathCue(context: Context, private val cue: Int) {
         SoundPool.Builder()
             .setMaxStreams(2)
             .setAudioAttributes(
-                AudioAttributes.Builder()
-                    .setUsage(AudioAttributes.USAGE_ALARM)
-                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                    .build(),
+                org.breatheless.app.SoundRoute.attributes(app),
             )
             .build()
     } else null

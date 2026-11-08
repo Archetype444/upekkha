@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -147,11 +148,8 @@ fun <T> OptionsDialog(title: String, options: List<Pair<T, String>>, chosen: T, 
     EInkDialog(onDismiss = onDismiss) {
         TextMMD(text = title, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
         Spacer(Modifier.height(8.dp))
-        for ((value, label) in options) {
-            ChoiceRow(label, value == chosen) {
-                onPick(value)
-                onDismiss()
-            }
+        PagedColumn(Modifier.fillMaxWidth().heightIn(max = 360.dp)) {
+            options.forEach { (value, label) -> item { ChoiceRow(label, value == chosen) { onPick(value); onDismiss() } } }
         }
     }
 }

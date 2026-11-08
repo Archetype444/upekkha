@@ -17,6 +17,9 @@
     <!-- A buzz at each change of breath, when the breathing cue is set to vibrate. -->
     <uses-permission android:name="android.permission.VIBRATE" />
 
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
+    <uses-feature android:name="android.hardware.sensor.stepdetector" android:required="false" />
     <queries>
         <!-- The other apps that act on selected text, so a field's selection menu can list them
              behind its ⋮ as every other app of this shop does. -->
@@ -49,12 +52,15 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"
             android:configChanges="keyboardHidden|orientation|screenSize">
+
+        </activity>
+
+        <activity-alias android:name="org.breatheless.app.MainActivity" android:targetActivity="com.wanderwildwood.nikka.MainActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
+        </activity-alias>
         <service
             android:name=".sit.SitService"
             android:exported="false" />
@@ -63,6 +69,10 @@
             android:name=".sit.BellReceiver"
             android:exported="false" />
 
+        <service android:name="org.breatheless.app.PracticeService" android:exported="false" android:foregroundServiceType="mediaPlayback" />
+        <receiver android:name="org.breatheless.app.MorningReminder" android:exported="false"><intent-filter>
+            <action android:name="android.intent.action.BOOT_COMPLETED"/><action android:name="android.intent.action.MY_PACKAGE_REPLACED"/><action android:name="android.intent.action.TIME_SET"/><action android:name="android.intent.action.TIMEZONE_CHANGED"/>
+        </intent-filter></receiver>
     </application>
 
 </manifest>

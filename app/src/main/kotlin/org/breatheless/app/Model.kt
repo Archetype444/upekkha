@@ -4,26 +4,41 @@ import kotlin.math.*
 
 enum class Kind { REST, REDUCE, RECOVER, CP, LISTEN }
 data class Phase(val kind:Kind,val seconds:Int=0) {
-    val title get()=when(kind){Kind.REST->"Rest";Kind.REDUCE->"Reduced breathing";Kind.RECOVER->"Recovery";Kind.CP->"Control Pause";Kind.LISTEN->"Mindfulness Buteyko"}
+    val title get()=when(kind){Kind.REST->"Rest";Kind.REDUCE->"Reduced breathing";Kind.RECOVER->"Recovery";Kind.CP->"Control Pause";Kind.LISTEN->"Recording"}
     val guidance get()=when(kind){
         Kind.REST->"Sit comfortably and breathe naturally. Let your shoulders and abdomen relax."
         Kind.REDUCE->"Relax the breathing muscles and allow quieter nasal breaths, with gentle air hunger. Return to natural breathing if the effort increases."
         Kind.RECOVER->"Breathe naturally until comfortable. Avoid controlling the depth or rhythm."
         Kind.CP->"After a normal, passive exhalation, begin the pause. End at the first clear urge to breathe or involuntary movement."
-        Kind.LISTEN->"Marilleke Vrancken · 20 minutes 27 seconds. Follow the recording at a comfortable level. You can pause or end the session at any time."
+        Kind.LISTEN->"Follow the recording at a comfortable level. End the session if you feel unwell."
     }
 }
 data class Protocol(val id:String,val name:String,val description:String,val phases:List<Phase>,val custom:Boolean=false){val durationSeconds get()=phases.sumOf{it.seconds};val cpCount get()=phases.count{it.kind==Kind.CP}}
 object Presets {
-    val listening=Protocol("mindfulness","Mindfulness Buteyko","Marilleke Vrancken. CP before the recording and again after the end rest and five-minute wait.",listOf(Phase(Kind.REST,300),Phase(Kind.CP),Phase(Kind.LISTEN,1227),Phase(Kind.RECOVER,300),Phase(Kind.REST,300),Phase(Kind.CP)))
-    val all=listOf(listening,
-        Protocol("standard","Standard","Three reduced-breathing blocks with a rested CP before and after.",listOf(Phase(Kind.REST,300),Phase(Kind.CP),Phase(Kind.REDUCE,300),Phase(Kind.RECOVER,60),Phase(Kind.REDUCE,300),Phase(Kind.RECOVER,60),Phase(Kind.REDUCE,300),Phase(Kind.RECOVER,300),Phase(Kind.CP))),
-        Protocol("short","Short","A five-minute practice block followed by recovery and CP.",listOf(Phase(Kind.REST,120),Phase(Kind.REDUCE,300),Phase(Kind.RECOVER,180),Phase(Kind.CP))),
-        Protocol("simple","Simple","Ten minutes of reduced breathing with rest and recovery.",listOf(Phase(Kind.REST,120),Phase(Kind.REDUCE,600),Phase(Kind.RECOVER,180))),
-        Protocol("meditative","Meditative","Fifteen minutes of reduced breathing between five-minute rests.",listOf(Phase(Kind.REST,300),Phase(Kind.REDUCE,900),Phase(Kind.RECOVER,300))),
-        Protocol("morning","Morning CP","Five minutes to settle, followed by one CP measurement.",listOf(Phase(Kind.REST,300),Phase(Kind.CP))),
-        Protocol("baseline","Rested baseline","Ten minutes of rest, followed by one CP measurement.",listOf(Phase(Kind.REST,600),Phase(Kind.CP))))
+    val morning=Protocol("morning","Morning CP","Begin when you are ready.",listOf(Phase(Kind.CP)))
+    val listening=Protocol("mindfulness","Mindfulness Buteyko","",listOf(Phase(Kind.CP),Phase(Kind.LISTEN,1227),Phase(Kind.RECOVER,300),Phase(Kind.CP)))
+    val all=listOf(morning,listening)
 }
+data class Freestyle(val rest:Int=120,val reduce:Int=300,val recovery:Int=60,val finalRecovery:Int=300,val rounds:Int=3,val initialCp:Boolean=true,val finalCp:Boolean=true,val betweenCp:Boolean=false) {
+    fun protocol():Protocol {
+        require(rest in 0..3600 && (rest==0 || rest>=5))
+        require(reduce in 5..3600 && recovery in 0..3600 && (recovery==0 || recovery>=5))
+        require(finalRecovery in 0..3600 && (finalRecovery==0 || finalRecovery>=5) && rounds in 1..12)
+        val phases=mutableListOf<Phase>()
+        if(rest>0)phases+=Phase(Kind.REST,rest)
+        if(initialCp)phases+=Phase(Kind.CP)
+        repeat(rounds){n->
+            phases+=Phase(Kind.REDUCE,reduce)
+            val recover=if(n==rounds-1)finalRecovery else recovery
+            if(recover>0)phases+=Phase(Kind.RECOVER,recover)
+            if(n<rounds-1 && betweenCp)phases+=Phase(Kind.CP)
+        }
+        if(finalCp)phases+=Phase(Kind.CP)
+        require(phases.sumOf{it.seconds}<=14400){"A freestyle practice can be up to four hours."}
+        return Protocol("freestyle","Freestyle","",phases,true)
+    }
+}
+
 enum class State { TIMED, LISTENING, CP_READY, CP_RUNNING, CP_REVIEW, PAUSED, FINISHED }
 data class CpValue(val seconds:Double,val timestamp:Long,val valid:Boolean,val label:String)
 data class PulseValue(val bpm:Int,val timestamp:Long,val label:String)

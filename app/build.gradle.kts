@@ -11,34 +11,37 @@ plugins {
 android {
     namespace = "com.wanderwildwood.nikka"
     compileSdk = 36
+    buildToolsVersion = "36.0.0"
 
     defaultConfig {
-        applicationId = "com.wanderwildwood.nikka"
+        applicationId = "org.breatheless.app"
         // The Kompakt runs Android 12 (API 31); nothing here needs anything newer.
         minSdk = 31
         targetSdk = 31
-        versionCode = 20
-        versionName = "0.2.4"
+        versionCode = 4
+        versionName = "3.0"
     }
 
     // A real keystore in signing/ signs every build type when it is present, so the
     // very first install is already release-signed and a later update can never hit
     // INSTALL_FAILED_UPDATE_INCOMPATIBLE. It is gitignored, and there is no fallback:
     // a fresh clone builds an unsigned release APK, which will not install anywhere.
-    val signingPropertiesFile = rootProject.file("signing/signing.properties")
-    val realSigningConfig = if (signingPropertiesFile.isFile) {
-        val signingProperties = Properties().apply {
-            signingPropertiesFile.inputStream().use(::load)
-        }
+    val keyFile = rootProject.file("signing/breatheless-update.p12")
+    val passwordFile = rootProject.file("signing/password.txt")
+    val realSigningConfig = if (keyFile.isFile && passwordFile.isFile) {
         signingConfigs.create("real") {
-            storeFile = rootProject.file("signing/signing.keystore")
-            storePassword = signingProperties.getProperty("STORE_PASSWORD")
-            keyAlias = signingProperties.getProperty("KEY_ALIAS")
-            keyPassword = signingProperties.getProperty("KEY_PASSWORD")
+            storeFile = keyFile
+            storeType = "PKCS12"
+            storePassword = passwordFile.readText().trim()
+            keyAlias = "breatheless-update"
+            keyPassword = passwordFile.readText().trim()
         }
-    } else {
-        null
+    } else null
+    gradle.taskGraph.whenReady {
+        if (allTasks.any { it.name.startsWith("assemble") || it.name.startsWith("package") } && realSigningConfig == null)
+            throw GradleException("Restore the original Upekkhā signing key and password; replacement keys are not permitted.")
     }
+    androidResources { noCompress += "mp3" }
 
     buildTypes {
         getByName("debug") {
@@ -65,6 +68,15 @@ android {
         }
     }
 
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
+        unitTests.all {
+            it.maxHeapSize = "1024m"
+            for (key in listOf("http.proxyHost", "http.proxyPort", "https.proxyHost", "https.proxyPort", "javax.net.ssl.trustStore", "java.io.tmpdir", "upekkha.screenshot.dir"))
+                System.getProperty(key)?.let { value -> it.systemProperty(key, value) }
+            it.systemProperty("robolectric.dependency.repo.url", "https://repo1.maven.org/maven2")
+        }
+    }
     lint {
         // Sideloaded onto a Kompakt, not going to Google Play, whose API-33 floor this
         // otherwise trips. Targeting the OS the device actually runs is deliberate.
@@ -104,11 +116,13 @@ dependencies {
     implementation(libs.compose.foundation)
     implementation(libs.compose.material3)
     implementation(libs.compose.ui.tooling.preview)
-    debugImplementation(libs.compose.ui.tooling)
 
     implementation(libs.mmd)
 
     testImplementation(libs.junit)
+    testImplementation("org.json:json:20250517")
+    testImplementation("org.robolectric:robolectric:4.15.1")
+    testImplementation("androidx.compose.ui:ui-test-junit4:1.9.5")
 }
 
 // The Licenses page lists what the build actually packs: this plugin walks each variant's runtime

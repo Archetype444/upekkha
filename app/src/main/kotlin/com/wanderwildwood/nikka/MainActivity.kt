@@ -1,6 +1,12 @@
 package com.wanderwildwood.nikka
 
 import android.os.Bundle
+import android.content.Intent
+import android.view.KeyEvent
+import org.breatheless.app.ButeykoActions
+import org.breatheless.app.MorningReminder
+import org.breatheless.app.PracticeService
+import org.breatheless.app.Presets
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.CompositionLocalProvider
@@ -25,7 +31,9 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalComposeUiApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (savedInstanceState == null) debugSeed()
+        if (PracticeService.live == null) runCatching { org.breatheless.app.Store.get(this).recover() }
+        MorningReminder.schedule(this)
+        openMorningCp(intent)
         Sitting.load(this)
         setContent {
             // A steady cursor: a blinking one is a repaint twice a second on an e-ink panel
@@ -43,15 +51,32 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    /**
-     * Debug builds only: a backup file named in the launching intent, read from the app's own
-     * files and restored, so an emulator test can start from a known log. `BuildConfig.DEBUG` is
-     * false in a release, so this is compiled out of it.
-     */
-    private fun debugSeed() {
-        if (!BuildConfig.DEBUG) return
-        val name = intent?.getStringExtra("seed") ?: return
-        val file = File(filesDir, name)
-        if (file.isFile) Store.get(this).replaceAll(Backup.read(file.readText()))
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        openMorningCp(intent)
+    }
+    private fun openMorningCp(intent: Intent?) {
+        if (intent?.getBooleanExtra("morning_cp", false) != true) return
+        intent.removeExtra("morning_cp")
+        if (PracticeService.live == null && Sitting.running.value == null && com.wanderwildwood.nikka.sit.Breathing.running.value == null)
+            runCatching { ButeykoActions.start(this, Presets.morning) }
+    }
+    override fun onPause() {
+        PracticeService.live?.backgroundCp()
+        super.onPause()
+    }
+    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
+        val service=PracticeService.live
+        if (event.repeatCount==0 && service!=null && org.breatheless.app.Store.get(this).bool("volumeKeys",false) && keyCode in listOf(KeyEvent.KEYCODE_VOLUME_UP,KeyEvent.KEYCODE_VOLUME_DOWN)) {
+            when(service.engine?.state) {
+                org.breatheless.app.State.CP_READY -> service.startCp()
+                org.breatheless.app.State.CP_RUNNING -> service.stopCp()
+                org.breatheless.app.State.CP_REVIEW -> service.review(keyCode==KeyEvent.KEYCODE_VOLUME_UP && service.engine?.interrupted!=true)
+                else -> return super.onKeyDown(keyCode,event)
+            }
+            return true
+        }
+        return super.onKeyDown(keyCode,event)
     }
 }

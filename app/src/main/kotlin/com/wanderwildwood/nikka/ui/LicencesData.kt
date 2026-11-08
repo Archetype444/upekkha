@@ -5,7 +5,7 @@ import androidx.compose.ui.res.stringResource
 import com.wanderwildwood.nikka.R
 
 /** The address of the app's own source code. */
-const val SOURCE_URL = "https://github.com/wanderwildwood/nikka"
+const val SOURCE_URL = "https://github.com/Archetype444/upekkha"
 
 /** Each distinct licence text once: family id and the raw resource. */
 val LICENCE_RAW: List<Pair<String, Int>> = listOf(
@@ -16,7 +16,7 @@ val LICENCE_RAW: List<Pair<String, Int>> = listOf(
 
 @Composable
 fun rememberLicencesData(): LicencesData = LicencesData(
-    appName = "Practice",
+    appName = "Upekkhā",
     sourceUrl = SOURCE_URL,
     licenceLine = stringResource(R.string.licences_licence),
     // One row per artifact in the APK, listed by the build (config/libraries adds what Gradle cannot see).
