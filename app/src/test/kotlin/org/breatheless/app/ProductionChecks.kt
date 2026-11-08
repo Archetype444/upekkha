@@ -32,9 +32,9 @@ fun runProductionChecks(){
  test("Second CP waits until the recovery has ended"){val e=Engine(audio,0);e.advance(1);e.advance(1000);check(!e.tick(300999));check(e.tick(301000));check(e.state==State.CP_READY && e.index==3)}
  test("Post-recording wait can be paused"){val e=Engine(audio,0);repeat(2){e.advance(1000)};e.pause(101000);e.resume(501000);check(e.remaining(501000)==200000L)}
  test("Audio metadata duration is included exactly once in default protocol"){check(audio.phases.count{it.kind==Kind.LISTEN}==1);check(audio.phases[1].seconds==1227);check(audio.durationSeconds==1527)}
- test("Both primary protocols pass protocol validation"){check(Presets.all.size==2);Presets.all.forEach{Codec.readProtocol(Codec.protocol(it))}}
+ test("All primary protocols pass protocol validation"){check(Presets.all.size==4);Presets.all.forEach{Codec.readProtocol(Codec.protocol(it))}}
  test("Twenty cue choices have unique IDs"){check(Signals.tones.size==20);check(Signals.tones.map{it.id}.distinct().size==20)}
- test("All seven events have different audible defaults"){val ids=Signals.events.map{Signals.defaultTone(it)};check(ids.distinct().size==7 && "none" !in ids);ids.forEach{id->check(Signals.tones.any{it.id==id})}}
+ test("All phase events have different audible defaults"){val ids=Signals.events.map{Signals.defaultTone(it)};check(ids.distinct().size==Signals.events.size && "none" !in ids);ids.forEach{id->check(Signals.tones.any{it.id==id})}}
  test("Every phase type has a cue event"){Kind.entries.forEach{check(it.name in Signals.events)};check("END" in Signals.events && "CP_END" in Signals.events)}
  test("Silent tone has no samples"){check(Signals.tones.single{it.id=="none"}.notes.isEmpty())}
  test("Audible tones have bounded durations"){Signals.tones.filter{it.id!="none"}.forEach{val seconds=it.notes.sumOf{n->n.second};check(seconds>0 && seconds<2);check(it.notes.any{n->n.first>0})}}
@@ -69,7 +69,7 @@ fun runProductionChecks(){
  test("Fixed CP targets are rejected"){val o=Codec.protocol(p);o.getJSONArray("phases").getJSONObject(1).put("seconds",30);reject{Codec.readProtocol(o)}}
  test("False audio durations are rejected"){val o=Codec.protocol(audio);o.getJSONArray("phases").getJSONObject(1).put("seconds",10);reject{Codec.readProtocol(o)}}
  test("Empty protocols are rejected"){reject{Codec.readProtocol(Codec.protocol(p).put("phases",JSONArray()))}}
- test("More than twenty CPs are rejected"){reject{Codec.readProtocol(Codec.protocol(p.copy(phases=List(21){Phase(Kind.CP)})))}}
+ test("More than one hundred CPs are rejected"){reject{Codec.readProtocol(Codec.protocol(p.copy(phases=List(101){Phase(Kind.CP)})))}}
  test("Unknown phase kinds are rejected"){val o=Codec.protocol(p);o.getJSONArray("phases").getJSONObject(0).put("kind","MAXIMUM");reject{Codec.readProtocol(o)}}
  test("Oversized backups are rejected"){reject{Codec.parse(" ".repeat(12000001))}}
  test("Per-phase tone choices survive settings import"){val input=JSONObject();Signals.events.forEach{input.put("tone_$it","glass")};val out=Codec.settings(input,JSONObject());Signals.events.forEach{check(out.getString("tone_$it")=="glass")}}

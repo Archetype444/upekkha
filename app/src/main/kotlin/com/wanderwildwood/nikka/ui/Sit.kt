@@ -60,6 +60,7 @@ import com.wanderwildwood.nikka.sit.Sitting
 import kotlinx.coroutines.delay
 import java.time.ZoneId
 
+private const val MAX_MINUTES = 600
 private val PRESETS = listOf(5, 10, 15, 20, 30, 45, 60)
 private val WARMUPS = listOf(0, 10, 30, 60, 120)
 // Breathing as the warm-up, in minutes. In the Warm-up choices these stand as their negatives,

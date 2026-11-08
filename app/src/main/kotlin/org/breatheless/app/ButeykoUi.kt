@@ -77,8 +77,9 @@ fun FreestyleEditor(templateId:String?,onBack:()->Unit,onStart:(Protocol)->Unit,
     var naming by remember{mutableStateOf<String?>(null)};var deleting by remember{mutableStateOf(false)};var problem by remember{mutableStateOf<String?>(null)};var undo by remember{mutableStateOf<Protocol?>(null)}
     fun change(next:Protocol,rememberUndo:Boolean=true) {
         runCatching {
-            Codec.readProtocol(Codec.protocol(next));if(rememberUndo)undo=protocol;protocol=next
+            Codec.readProtocol(Codec.protocol(next))
             if(templateId==null)store.saveFreestyle(next)else store.saveTemplate(next)
+            if(rememberUndo)undo=protocol;protocol=next
         }.onFailure{problem=it.message ?:"Check the length of this practice."}
     }
     PagedColumn(Modifier.fillMaxSize(),contentPadding=PaddingValues(horizontal=20.dp)) {
@@ -119,7 +120,7 @@ fun FreestyleEditor(templateId:String?,onBack:()->Unit,onStart:(Protocol)->Unit,
         if(mode=="rename")change(protocol.copy(name=name))else runCatching{store.saveTemplate(protocol.copy(id="custom-"+Store.id(),name=name,custom=true))}.onFailure{problem=it.message}
         naming=null
     }}
-    if(deleting)EInkDialog(onDismiss={deleting=false}){TextMMD(text="Delete ${protocol.name} from saved practices?");DialogButtons("Cancel","Delete",{deleting=false},{store.deleteTemplate(protocol.id);deleting=false;onBack()})}
+    if(deleting)EInkDialog(onDismiss={deleting=false}){TextMMD(text="Delete ${protocol.name} from saved practices?");DialogButtons("Cancel","Delete",{deleting=false},{runCatching{store.deleteTemplate(protocol.id);deleting=false;onBack()}.onFailure{problem=it.message}})}
     problem?.let{ErrorDialog(it){problem=null}}
 }
 @Composable

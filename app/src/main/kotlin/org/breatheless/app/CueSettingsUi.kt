@@ -1,5 +1,6 @@
 package org.breatheless.app
 
+import org.json.JSONObject
 import android.Manifest
 import android.app.TimePickerDialog
 import android.content.Intent
@@ -24,6 +25,7 @@ fun CueSettingsScreen(onBack: () -> Unit) {
     val context = LocalContext.current
     val store = remember { Store.get(context) }
     val version by store.version.collectAsState()
+    val config = remember(version) { JSONObject(store.settings.toString()) }
     val channel = remember(version) { store.str("fxChannel", "Alarm") }
     val feedback = remember(channel) { Feedback(context) }
     DisposableEffect(feedback) { onDispose { feedback.release() } }
@@ -44,30 +46,30 @@ fun CueSettingsScreen(onBack: () -> Unit) {
                 item { TextMMD(text = "Bells and phase tones use this channel and its system volume. The recording and ambience use Media.", style = MaterialTheme.typography.labelSmall) }
                 item { DialogButton("Test channel") { feedback.tone("bell") } }
                 item { Heading("Buteyko phase cues") }
-                item { SwitchRow("Sound at phase changes", store.bool("sound")) { set("sound", it) } }
-                item { SettingRow("Tone volume", "${store.int("cueVolume", 45)}%") { dialog = "cueVolume" } }
-                item { SwitchRow("Vibration at phase changes", store.bool("haptic")) { set("haptic", it) } }
-                item { SettingRow("Vibration style", store.str("vibration", "Double")) { dialog = "vibration" } }
-                item { SettingRow("Vibration intensity", "${store.int("intensity", 55)}%") { dialog = "intensity" } }
+                item { SwitchRow("Sound at phase changes", config.optBoolean("sound",true)) { set("sound", it) } }
+                item { SettingRow("Tone volume", "${config.optInt("cueVolume", 45)}%") { dialog = "cueVolume" } }
+                item { SwitchRow("Vibration at phase changes", config.optBoolean("haptic",true)) { set("haptic", it) } }
+                item { SettingRow("Vibration style", config.optString("vibration", "Double")) { dialog = "vibration" } }
+                item { SettingRow("Vibration intensity", "${config.optInt("intensity", 55)}%") { dialog = "intensity" } }
                 item { DialogButton("Test vibration") { feedback.vibrate() } }
                 if (!feedback.hasVibrator() || !feedback.amplitudeControl()) item {
                     TextMMD(text = if (!feedback.hasVibrator()) "This phone does not report a vibration motor." else "This phone uses a fixed vibration strength. The pattern and off setting still apply.", style = MaterialTheme.typography.labelSmall)
                 }
                 Signals.events.forEachIndexed { index, event -> item {
-                    val tone = store.str("tone_$event", Signals.defaultTone(event))
+                    val tone = config.optString("tone_$event", Signals.defaultTone(event))
                     SettingRow(Signals.labels[index], Signals.tones.first { it.id == tone }.name) { dialog = event }
                 } }
                 item { Heading("During Buteyko practice") }
-                item { SettingRow("Ambience", store.str("ambience", "Off")) { dialog = "ambience" } }
-                item { SettingRow("Ambience volume", "${store.int("volume", 30)}%") { dialog = "volume" } }
-                item { SwitchRow("Pulse before and after practice", store.bool("pulsePrompt", false)) { set("pulsePrompt", it) } }
-                item { SwitchRow("Hide the running CP time", store.bool("hideCp")) { set("hideCp", it) } }
-                item { SwitchRow("Volume buttons control CP", store.bool("volumeKeys", false), "Either button starts or stops CP. Afterward, volume up keeps the value; volume down excludes it.") { set("volumeKeys", it) } }
+                item { SettingRow("Ambience", config.optString("ambience", "Off")) { dialog = "ambience" } }
+                item { SettingRow("Ambience volume", "${config.optInt("volume", 30)}%") { dialog = "volume" } }
+                item { SwitchRow("Pulse before and after practice", config.optBoolean("pulsePrompt", false)) { set("pulsePrompt", it) } }
+                item { SwitchRow("Hide the running CP time", config.optBoolean("hideCp",true)) { set("hideCp", it) } }
+                item { SwitchRow("Volume buttons control CP", config.optBoolean("volumeKeys", false), "Either button starts or stops CP. Afterward, volume up keeps the value; volume down excludes it.") { set("volumeKeys", it) } }
                 item { Heading("Morning CP reminder") }
-                item { SwitchRow("Daily reminder", store.bool("morningReminder", false)) { enabled ->
+                item { SwitchRow("Daily reminder", config.optBoolean("morningReminder", false)) { enabled ->
                     if (enabled && Build.VERSION.SDK_INT >= 33) permission.launch(Manifest.permission.POST_NOTIFICATIONS) else set("morningReminder", enabled)
                 } }
-                item { SettingRow("Reminder time", "%02d:%02d".format(store.settings.optInt("reminderHour", 8), store.settings.optInt("reminderMinute", 0))) {
+                item { SettingRow("Reminder time", "%02d:%02d".format(config.optInt("reminderHour", 8), config.optInt("reminderMinute", 0))) {
                     dialog = "reminderTime"
                 } }
                 if (!exact) item { SettingRow("Allow exact reminders", "Without this permission Android may delay the reminder.") { open(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM, Uri.parse("package:${context.packageName}"))) } }
