@@ -13,7 +13,7 @@ bt=args.sdk/"build-tools/36.0.0"
 env=os.environ.copy()
 if args.java_home:
  env["JAVA_HOME"]=str(args.java_home);env["PATH"]=str(args.java_home/"bin")+os.pathsep+env["PATH"]
-env["LD_LIBRARY_PATH"]=str(bt/"lib64")+os.pathsep+env.get("LD_LIBRARY_PATH","")
+env["LD_LIBRARY_PATH"]=os.pathsep.join([str(bt/"lib64")]+([str(args.java_home/"lib"),str(args.java_home/"lib/server")] if args.java_home else [])+[env.get("LD_LIBRARY_PATH","")])
 sig=subprocess.run([str(bt/'apksigner'),'verify','--verbose','--print-certs',str(apk)],env=env,capture_output=True,text=True,check=True).stdout
 badging=subprocess.run([str(bt/'aapt'),'dump','badging',str(apk)],env=env,capture_output=True,text=True,check=True).stdout
 manifest=subprocess.run([str(bt/'aapt'),'dump','xmltree',str(apk),'AndroidManifest.xml'],env=env,capture_output=True,text=True,check=True).stdout

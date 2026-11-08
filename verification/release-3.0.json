@@ -1,0 +1,210 @@
+{
+  "version": "3.0",
+  "versionCode": 4,
+  "builtAtUtc": "2026-11-08T10:22:55.897697+00:00",
+  "tasks": [
+    "assembleDebug",
+    "testDebugUnitTest",
+    "lintDebug",
+    "assembleRelease"
+  ],
+  "buildResult": "SUCCESSFUL",
+  "tests": {
+    "tests": 171,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "nestedProductionChecks": 64,
+  "suites": [
+    {
+      "name": "com.wanderwildwood.nikka.data.StatsTest",
+      "tests": "24",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.wanderwildwood.nikka.sit.BreathTest",
+      "tests": "6",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.wanderwildwood.nikka.sit.PlanTest",
+      "tests": "6",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.wanderwildwood.nikka.ui.ArmedTest",
+      "tests": "10",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.wanderwildwood.nikka.ui.FilesPickerTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.wanderwildwood.nikka.ui.HabitMarksTest",
+      "tests": "13",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.wanderwildwood.nikka.ui.HouseAboutTest",
+      "tests": "15",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.wanderwildwood.nikka.ui.HouseButtonTest",
+      "tests": "9",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.wanderwildwood.nikka.ui.HouseTypeTest",
+      "tests": "5",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.wanderwildwood.nikka.ui.LicencesJsonTest",
+      "tests": "6",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.wanderwildwood.nikka.ui.LicencesLogicTest",
+      "tests": "22",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.wanderwildwood.nikka.ui.LicencesTest",
+      "tests": "5",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.wanderwildwood.nikka.ui.LinkOpenerTest",
+      "tests": "6",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.wanderwildwood.nikka.ui.PagedColumnTest",
+      "tests": "12",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.wanderwildwood.nikka.ui.StoneTabsTest",
+      "tests": "5",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "org.breatheless.app.KompaktUiTest",
+      "tests": "2",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "org.breatheless.app.MigrationTest",
+      "tests": "4",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "org.breatheless.app.PracticeServiceTest",
+      "tests": "4",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "org.breatheless.app.Version3Test",
+      "tests": "14",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    }
+  ],
+  "lint": {
+    "Warning": 56,
+    "Hint": 1
+  },
+  "apks": [
+    {
+      "file": "Upekkha-v3.0.apk",
+      "size": 29574656,
+      "sha256": "1a0a9c195bda1d21e82d7bf53ce19521571ac14114e2fa41ec11c1a348a8f637",
+      "certificateSha256": "a5edb5474ed2435c35c086b1920a0acfdfeac91ad00c7fb6659c9017a44e2268",
+      "applicationId": "org.breatheless.app",
+      "versionCode": 4,
+      "versionName": "3.0",
+      "minSdk": 31,
+      "targetSdk": 31,
+      "launcher": "org.breatheless.app.MainActivity",
+      "signatureVerified": true,
+      "zipIntegrityVerified": true,
+      "zipAlignmentVerified": true,
+      "originalRawAudioFilesVerified": 26,
+      "internetPermission": false,
+      "allCueAndAmbienceResourcesPresent": true,
+      "recordingCopies": 1,
+      "recordingStoredUncompressed": true,
+      "recordingSha256": "b6468bc0e09e70e2ba9723b463c748947b96c6f8808111a769d11d6cc44a178a",
+      "privateSigningMaterialPackaged": false
+    },
+    {
+      "file": "Upekkha-v3.0-debug.apk",
+      "size": 57553082,
+      "sha256": "2c98903ad5d77c611b01a4f4dde57e0c5e54b21f1e144a58cf7cf311618cb012",
+      "certificateSha256": "a5edb5474ed2435c35c086b1920a0acfdfeac91ad00c7fb6659c9017a44e2268",
+      "applicationId": "org.breatheless.app",
+      "versionCode": 4,
+      "versionName": "3.0",
+      "minSdk": 31,
+      "targetSdk": 31,
+      "launcher": "org.breatheless.app.MainActivity",
+      "signatureVerified": true,
+      "zipIntegrityVerified": true,
+      "zipAlignmentVerified": true,
+      "originalRawAudioFilesVerified": 26,
+      "internetPermission": false,
+      "allCueAndAmbienceResourcesPresent": true,
+      "recordingCopies": 1,
+      "recordingStoredUncompressed": true,
+      "recordingSha256": "b6468bc0e09e70e2ba9723b463c748947b96c6f8808111a769d11d6cc44a178a",
+      "privateSigningMaterialPackaged": false
+    }
+  ],
+  "physicalDeviceTested": false,
+  "limitations": [
+    "No physical Mudita Kompakt or Android emulator was available. Android 12 UI and service checks used Robolectric, including native rendering at 480-pixel width.",
+    "On-device installation/update, audible sound output, vibration strength, hardware step counting, audio interruptions and overnight screen-off/Doze reminders were not physically tested.",
+    "System volume, DND, battery restrictions and hardware capabilities affect cues and reminders. The app includes channel/vibration tests, exact-alarm status and DuraSpeed guidance."
+  ]
+}
