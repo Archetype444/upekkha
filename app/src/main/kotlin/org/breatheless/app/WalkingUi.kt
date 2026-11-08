@@ -39,6 +39,7 @@ fun WalkingScreen(onBack: () -> Unit) {
     var steps by remember { mutableIntStateOf(0) }
     var now by remember { mutableLongStateOf(began) }
     var saved by remember { mutableStateOf(false) }
+    var quit by remember { mutableStateOf(false) }
     var problem by remember { mutableStateOf<String?>(null) }
     fun release() {
         if (!holding) return
@@ -49,12 +50,12 @@ fun WalkingScreen(onBack: () -> Unit) {
         if (saved) return true
         release()
         return runCatching {
-            if (values.isNotEmpty()) store.upsert(Entry(id, timestamp, "Walking exercise", ((SystemClock.elapsedRealtime() - began) / 1000).toInt(), "Saved", walks = values.toList(), context = "Walking"))
+            if (values.isNotEmpty()) store.upsert(Entry(id, timestamp, "Walking exercise", ((SystemClock.elapsedRealtime() - began) / 1000).toInt(), "Completed", walks = values.toList(), context = "Walking"))
             saved = true
             true
         }.getOrElse { problem = it.message; false }
     }
-    BackHandler { if (save()) onBack() }
+    BackHandler { quit=true }
     LaunchedEffect(Unit) { while (true) { delay(1000); now = SystemClock.elapsedRealtime(); if (now - began >= 12 * 60 * 1000 && !saved) { if (save()) onBack() } } }
     DisposableEffect(sensor, permitted) {
         val listener = object : SensorEventListener {
@@ -64,7 +65,7 @@ fun WalkingScreen(onBack: () -> Unit) {
         sensorActive = sensor != null && permitted && runCatching { sensorManager.registerListener(listener, sensor, SensorManager.SENSOR_DELAY_NORMAL) }.getOrDefault(false)
         onDispose { sensorManager.unregisterListener(listener) }
     }
-    DisposableEffect(Unit) { onDispose { if (!saved && values.isNotEmpty()) runCatching { store.upsert(Entry(id, timestamp, "Walking exercise", ((SystemClock.elapsedRealtime() - began) / 1000).toInt(), "Interrupted", walks = values.toList(), context = "Walking")) } } }
+
     PagedColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(20.dp)) {
         item { Heading("Walking exercise") }
         item { TextMMD(text = "Walk on level ground. After a normal exhalation, begin a gentle hold and count steps. Release at the first urge to breathe, then recover fully before another hold. Stop if you feel unwell.", style = MaterialTheme.typography.bodySmall) }
@@ -78,6 +79,12 @@ fun WalkingScreen(onBack: () -> Unit) {
         } else item { DialogButton("Begin hold", true) { steps = 0; holdStart = SystemClock.elapsedRealtime(); holding = true } }
         values.forEachIndexed { index, walk -> item { SettingRow("Hold ${index + 1}", "${walk.steps} steps · ${cpLabel(walk.seconds)}", null) } }
         problem?.let { item { TextMMD(text = it) } }
-        item { DialogButton("End and save") { if (save()) onBack() } }
+        item { DialogButton("Finish and save") { if (save()) onBack() } }
+        item { DialogButton("Quit session") { quit=true } }
     }
+    if(quit) EInkDialog(onDismiss={quit=false}) {
+        TextMMD(text="Quit this walking practice? Its measurements will be discarded.")
+        DialogButtons("Continue","Quit",{quit=false},{holding=false;saved=true;quit=false;onBack()})
+    }
+
 }

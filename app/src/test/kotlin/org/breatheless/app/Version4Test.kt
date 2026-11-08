@@ -33,4 +33,6 @@ class Version4Test {
     @Test fun everyBlockAndEndingUsesAnExistingCue() {assertEquals(Signals.events.size,Signals.events.distinct().size);Signals.events.forEach{event->assertTrue(Signals.tones.any{it.id==Signals.defaultTone(event)})}}
     @Test fun delayedHoldStopCannotProduceAnUnreadableRecord() {val e=Engine(Protocol("late","Late","",listOf(Phase(Kind.MP_FULL))),0);e.startCp(1000);e.tick(1900000);assertTrue(e.interrupted);assertEquals(600.0,e.pendingCp,0.0);val row=Entry("late",1760000000000,"Late",1900,"Completed",holds=listOf(HoldValue(Kind.MP_FULL,e.pendingCp,1760000000000,false,"Late pause")));assertEquals(row,Codec.readEntry(Codec.entry(row)))}
 
+    @Test fun fifteenSecondSittingProducesEveryRequestedBell() {assertEquals(listOf(1000L,16000L,31000L,46000L,61000L),com.wanderwildwood.nikka.sit.Plan(1000,0,60,15).bells().map{it.at})}
+
 }

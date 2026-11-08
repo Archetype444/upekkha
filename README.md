@@ -21,7 +21,7 @@ The four tabs are **Sit**, **Breathe**, **Buteyko** and **Track**. Today and hab
 
 There is no before-practising popup. The supplied exercise instructions and links remain available in Settings. User-ended pauses have no prescribed hold target. Software limits exclude unattended measurements and are not practice goals.
 
-Completed Buteyko sessions are saved once. **Quit session discards the entire incomplete session**, including any CP or pulse values already taken. Interrupted-session checkpoints from older versions are discarded rather than imported as new partial records. Previously saved historical data is retained and can be deleted in Track.
+Completed Buteyko sessions are saved once. **Quit session discards the entire incomplete session**, including any CP or pulse values already taken. Interrupted-session checkpoints from older versions are discarded rather than imported as new partial records. Previously saved historical data is retained and can be deleted in Track. Walking remains self-paced: Finish and save completes it deliberately; Quit or Back discards it without an automatic save.
 
 ## Sounds, reminders and data
 

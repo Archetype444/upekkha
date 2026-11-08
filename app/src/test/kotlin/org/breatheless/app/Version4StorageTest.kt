@@ -34,4 +34,12 @@ class Version4StorageTest {
     }
     @Test fun olderCombinedBackupVersionStillRestores() {val s=Store.get(context);s.upsert(Entry("old",1760000000000,"Old practice",30,"Completed"));val raw=JSONObject(UnifiedBackup.write(context)).put("schemaVersion",3).toString();s.entries.clear();s.save();UnifiedBackup.restore(context,raw);assertEquals("old",s.entries.single().id)}
     @Test fun oldMinuteIntervalMigratesToSeconds() {context.getSharedPreferences("nikka",0).edit().putInt("interval",5).commit();assertEquals(300,Prefs(context).intervalSec);Prefs(context).intervalSec=30;assertEquals(30,Prefs(context).intervalSec)}
+    @Test fun shortIntervalUsesAlarmClockSchedulingWhenPermitted() {
+        org.robolectric.shadows.ShadowAlarmManager.setCanScheduleExactAlarms(true)
+        val now=System.currentTimeMillis();val prefs=Prefs(context);prefs.running=com.wanderwildwood.nikka.sit.Plan(now,0,60,15);prefs.rung=0
+        Sitting.schedule(context)
+        val alarm=context.getSystemService(android.app.AlarmManager::class.java).nextAlarmClock
+        assertNotNull(alarm);assertEquals(now+15000,alarm.triggerTime)
+    }
+
 }

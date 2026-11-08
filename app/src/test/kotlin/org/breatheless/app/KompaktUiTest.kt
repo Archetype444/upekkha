@@ -150,4 +150,18 @@ class KompaktUiTest {
         compose.onNodeWithText("Guided Buteyko").assertIsDisplayed()
     }
 
+    private fun walkOneHold() {
+        compose.onNodeWithText("Freestyle").performClick();reach("Walking exercise").performClick();reach("Begin hold").performClick();reach("Add step").performClick()
+        compose.runOnIdle { ShadowSystemClock.advanceBy(Duration.ofSeconds(3)) }
+        reach("Release and recover").performClick()
+    }
+    @Test fun leavingWalkingDoesNotAutosavePartialPractice() {
+        walkOneHold();compose.runOnIdle { compose.activity.onBackPressedDispatcher.onBackPressed() };compose.onNodeWithText("Quit").performClick()
+        compose.runOnIdle { assertTrue(Store.get(compose.activity).entries.isEmpty()) }
+    }
+    @Test fun walkingCanStillBeDeliberatelyCompletedAndSaved() {
+        walkOneHold();reach("Finish and save").performClick()
+        compose.runOnIdle { val e=Store.get(compose.activity).entries.single();assertEquals("Completed",e.status);assertEquals(1,e.walks.single().steps) }
+    }
+
 }
