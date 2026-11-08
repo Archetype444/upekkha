@@ -70,7 +70,8 @@ class KompaktUiTest {
     }
     @Test fun sittingOffersShortIntervalsAndPersistsSeconds() {
         compose.onNodeWithText("Sit").performClick()
-        compose.onNodeWithText("Interval bell").performClick()
+        compose.onNodeWithTag("start").assertIsDisplayed()
+        reach("Interval bell").performClick()
         compose.onNodeWithText("Every 15 sec").assertIsDisplayed().performClick()
         compose.onNodeWithText("Every 15 sec").assertIsDisplayed()
         compose.runOnIdle {assertEquals(15,Prefs(compose.activity).intervalSec)}
@@ -162,6 +163,13 @@ class KompaktUiTest {
     @Test fun walkingCanStillBeDeliberatelyCompletedAndSaved() {
         walkOneHold();reach("Finish and save").performClick()
         compose.runOnIdle { val e=Store.get(compose.activity).entries.single();assertEquals("Completed",e.status);assertEquals(1,e.walks.single().steps) }
+    }
+
+    @Test fun sittingStartRemainsVisibleWhenPermissionHelpIsShown() {
+        compose.onNodeWithText("Sit").performClick();compose.onNodeWithTag("start").assertIsDisplayed();compose.onNodeWithText("Other").assertIsDisplayed()
+        screenshot("v4-sit-start.png")
+        compose.onNodeWithTag("start").performClick()
+        compose.runOnIdle { assertNotNull(Prefs(compose.activity).running);com.wanderwildwood.nikka.sit.Sitting.endEarly(compose.activity);com.wanderwildwood.nikka.sit.Sitting.noteDone(compose.activity) }
     }
 
 }

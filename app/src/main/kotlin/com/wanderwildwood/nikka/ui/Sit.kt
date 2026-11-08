@@ -13,6 +13,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -90,58 +91,43 @@ fun SitTab(c: AppState) {
     }
     val exactOn = remember(checks) { context.getSystemService(AlarmManager::class.java).canScheduleExactAlarms() }
 
-    Column(Modifier.fillMaxSize().padding(horizontal = 20.dp)) {
-        Spacer(Modifier.height(10.dp))
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.Bottom) {
-            // A figure, like a speedometer's: exempt from the type scale.
-            TextMMD(text = minutes.toString(), fontSize = 64.sp, fontWeight = FontWeight.Medium, modifier = Modifier.testTag("minutes"))
-            TextMMD(
-                text = pluralStringResource(R.plurals.minutes_word, minutes),
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(start = 8.dp, bottom = 14.dp),
-            )
-        }
-        Spacer(Modifier.height(6.dp))
-        val cells = PRESETS.map { it.toString() } + stringResource(R.string.sit_other)
-        for (row in cells.chunked(4)) {
-            Row(Modifier.fillMaxWidth().padding(vertical = 4.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                for (label in row) {
-                    val preset = label.toIntOrNull()
-                    val chosen = if (preset != null) preset == minutes else minutes !in PRESETS
-                    Stone(label, chosen, Modifier.weight(1f)) {
-                        if (preset != null) { prefs.minutes = preset; v++ } else pickOther = true
+    Column(Modifier.fillMaxSize()) {
+        PagedColumn(Modifier.weight(1f).fillMaxWidth(),contentPadding=PaddingValues(start=20.dp,end=12.dp)) {
+            item {
+                Spacer(Modifier.height(10.dp))
+                Row(Modifier.fillMaxWidth(),horizontalArrangement=Arrangement.Center,verticalAlignment=Alignment.Bottom) {
+                    TextMMD(text=minutes.toString(),fontSize=64.sp,fontWeight=FontWeight.Medium,modifier=Modifier.testTag("minutes"))
+                    TextMMD(text=pluralStringResource(R.plurals.minutes_word,minutes),style=MaterialTheme.typography.titleMedium,modifier=Modifier.padding(start=8.dp,bottom=14.dp))
+                }
+                Spacer(Modifier.height(6.dp))
+            }
+            val cells=PRESETS.map { it.toString() }+context.getString(R.string.sit_other)
+            cells.chunked(4).forEach { row -> item {
+                Row(Modifier.fillMaxWidth().padding(vertical=4.dp),horizontalArrangement=Arrangement.spacedBy(8.dp)) {
+                    for(label in row) {
+                        val preset=label.toIntOrNull()
+                        val chosen=if(preset!=null)preset==minutes else minutes !in PRESETS
+                        Stone(label,chosen,Modifier.weight(1f)) { if(preset!=null){prefs.minutes=preset;v++}else pickOther=true }
                     }
+                }
+            } }
+            item { Spacer(Modifier.height(8.dp));HorizontalDividerMMD(thickness=1.dp) }
+            item {
+                val warmupValue=if(breatheFirst>0) stringResource(R.string.sit_warmup_breathe_row,breath.figure(),pluralStringResource(R.plurals.minutes_long,breatheFirst,breatheFirst.toString())) else warmupName(warmup)
+                SettingRow(stringResource(R.string.sit_warmup),warmupValue){pickWarmup=true}
+            }
+            item { SettingRow(stringResource(R.string.sit_interval),intervalName(interval)){pickInterval=true} }
+            if(!exactOn) item {
+                SettingRow(stringResource(R.string.sit_exact),stringResource(R.string.sit_exact_allow)) {
+                    runCatching { context.startActivity(Intent(AndroidSettings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM,Uri.parse("package:"+context.packageName)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }
+                        .onFailure { android.widget.Toast.makeText(context,context.getString(R.string.cannot_open),android.widget.Toast.LENGTH_LONG).show() }
                 }
             }
         }
+        ButtonMMD(onClick={if(breatheFirst>0)Breathing.start(context,breatheFirst,thenSit=true)else Sitting.start(context)},modifier=Modifier.padding(horizontal=20.dp,vertical=8.dp).fillMaxWidth().height(56.dp).testTag("start")) {
+            TextMMD(text=stringResource(R.string.sit_start),style=MaterialTheme.typography.titleMedium)
+        }
         Spacer(Modifier.height(8.dp))
-        HorizontalDividerMMD(thickness = 1.dp)
-        val warmupValue = if (breatheFirst > 0) {
-            stringResource(R.string.sit_warmup_breathe_row, breath.figure(), pluralStringResource(R.plurals.minutes_long, breatheFirst, breatheFirst.toString()))
-        } else {
-            warmupName(warmup)
-        }
-        SettingRow(stringResource(R.string.sit_warmup), warmupValue) { pickWarmup = true }
-        SettingRow(stringResource(R.string.sit_interval), intervalName(interval)) { pickInterval = true }
-        if (!exactOn) {
-            SettingRow(stringResource(R.string.sit_exact), stringResource(R.string.sit_exact_allow)) {
-                runCatching {
-                    context.startActivity(
-                        Intent(AndroidSettings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM, Uri.parse("package:" + context.packageName))
-                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
-                    )
-                }.onFailure { android.widget.Toast.makeText(context, context.getString(R.string.cannot_open), android.widget.Toast.LENGTH_LONG).show() }
-            }
-        }
-        Spacer(Modifier.weight(1f))
-        ButtonMMD(
-            onClick = {
-                // Breathing first: the sitting starts when the breathing ends, with no warm-up.
-                if (breatheFirst > 0) Breathing.start(context, breatheFirst, thenSit = true) else Sitting.start(context)
-            },
-            modifier = Modifier.fillMaxWidth().height(56.dp).testTag("start"),
-        ) { TextMMD(text = stringResource(R.string.sit_start), style = MaterialTheme.typography.titleMedium) }
-        Spacer(Modifier.height(20.dp))
     }
 
     if (pickOther) OtherLengthDialog(minutes, onSet = { prefs.minutes = it; v++ }, onDismiss = { pickOther = false })
@@ -171,7 +157,7 @@ fun SitTab(c: AppState) {
 /** A choice: the chosen one a black stone, the others outlined (the house button). */
 @Composable
 private fun Stone(label: String, chosen: Boolean, modifier: Modifier, onClick: () -> Unit) {
-    HouseButton(label, onClick, modifier.testTag("preset_$label"), on = chosen)
+    HouseButton(label, onClick, modifier.testTag("preset_$label"), on = chosen, compact = true)
 }
 
 @Composable
