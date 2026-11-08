@@ -71,7 +71,7 @@ class KompaktUiTest {
     @Test fun sittingOffersShortIntervalsAndPersistsSeconds() {
         compose.onNodeWithText("Sit").performClick()
         compose.onNodeWithTag("start").assertIsDisplayed()
-        compose.onRoot().performTouchInput { swipeUp() }
+        compose.onRoot().performTouchInput { swipe(androidx.compose.ui.geometry.Offset(200f,500f),androidx.compose.ui.geometry.Offset(200f,250f)) }
         reach("Interval bell").performClick()
         compose.onNodeWithText("Every 15 sec").assertIsDisplayed().performClick()
         compose.onNodeWithText("Every 15 sec").assertIsDisplayed()
@@ -96,7 +96,7 @@ class KompaktUiTest {
         repeat(12) {
             val node=compose.onNodeWithText(text)
             if(runCatching{node.assertIsDisplayed()}.isSuccess)return node
-            compose.onRoot().performTouchInput { swipeUp() }
+            compose.onRoot().performTouchInput { swipe(androidx.compose.ui.geometry.Offset(200f,500f),androidx.compose.ui.geometry.Offset(200f,250f)) }
         }
         error("Could not reach $text")
     }
