@@ -36,7 +36,7 @@ import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(c: AppState, onBack: () -> Unit) {
+fun SettingsScreen(c: AppState, onBack: () -> Unit, onMore: () -> Unit) {
     BackHandler { onBack() }
     val context = LocalContext.current
     val prefs = remember { Prefs(context) }
@@ -65,7 +65,7 @@ fun SettingsScreen(c: AppState, onBack: () -> Unit) {
     val save = rememberLauncherForActivityResult(FilesCreateDocument("application/json")) { uri ->
         if (uri == null) return@rememberLauncherForActivityResult
         runCatching {
-            context.contentResolver.openOutputStream(uri, "wt")!!.use { it.write(Backup.write(c.store).toByteArray()) }
+            context.contentResolver.openOutputStream(uri, "wt")!!.use { it.write(org.breatheless.app.UnifiedBackup.write(context).toByteArray()) }
         }.onSuccess { Toast.makeText(context, context.getString(R.string.backup_saved), Toast.LENGTH_SHORT).show() }
             .onFailure {
                 // The picker has already made an empty file; do not leave it behind.
@@ -76,8 +76,10 @@ fun SettingsScreen(c: AppState, onBack: () -> Unit) {
     val restore = rememberLauncherForActivityResult(FilesOpenDocument(writable = false)) { uri ->
         if (uri == null) return@rememberLauncherForActivityResult
         runCatching {
-            val text = context.contentResolver.openInputStream(uri)!!.use { it.readBytes().toString(Charsets.UTF_8) }
-            c.store.replaceAll(Backup.read(text))
+            val text = context.contentResolver.openInputStream(uri)!!.use { org.breatheless.app.UnifiedBackup.readBounded(it) }
+            org.breatheless.app.UnifiedBackup.restore(context, text)
+            showStreaks = prefs.showStreaks
+            v++
         }.onSuccess { Toast.makeText(context, context.getString(R.string.restore_done), Toast.LENGTH_SHORT).show() }
             .onFailure { Toast.makeText(context, context.getString(R.string.restore_not_ours), Toast.LENGTH_LONG).show() }
     }
@@ -109,6 +111,7 @@ fun SettingsScreen(c: AppState, onBack: () -> Unit) {
                     }
                 }
             }
+            item { SettingRow("Sound, vibration and CP", "Phase cues, audio channel and morning reminder", onMore) }
             item(key = "bell") {
                 SettingRow(
                     stringResource(R.string.settings_try_bell),
@@ -136,7 +139,7 @@ fun SettingsScreen(c: AppState, onBack: () -> Unit) {
             item(key = "backup") { Heading(stringResource(R.string.settings_backup_heading)) }
             item(key = "save") {
                 SettingRow(stringResource(R.string.settings_save_backup), stringResource(R.string.settings_save_backup_note)) {
-                    save.launch("practice-${LocalDate.now()}.json")
+                    save.launch("Upekkha-${LocalDate.now()}.json")
                 }
             }
             item(key = "restore") {

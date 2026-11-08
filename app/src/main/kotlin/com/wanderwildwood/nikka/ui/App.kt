@@ -1,5 +1,6 @@
 package com.wanderwildwood.nikka.ui
 
+import org.breatheless.app.*
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,6 +34,7 @@ import java.util.Locale
 private sealed interface Screen {
     data object Tabs : Screen
     data object Settings : Screen
+    data object Cues : Screen
     data class Habit(val id: Long) : Screen
 }
 
@@ -61,22 +63,27 @@ fun PracticeApp() {
     val c = AppState(store, today, firstDay, version)
 
     var screen by remember { mutableStateOf<Screen>(Screen.Tabs) }
-    var tab by rememberSaveable { mutableIntStateOf(0) }
+    var tab by rememberSaveable { mutableIntStateOf(context.getSharedPreferences("upekkha-ui", 0).getInt("tab", 2).coerceIn(0, 4)) }
 
+    val buteyko by PracticeService.active.collectAsState()
+    val result by PracticeService.result.collectAsState()
     val plan = running
     val breath = breathing
     when {
+        result != null -> ButeykoEndScreen(result!!)
+        buteyko -> ButeykoSessionScreen()
         breath != null -> BreathingScreen(breath)
         plan != null -> SessionScreen(plan)
         ended >= 0 -> EndScreen(c, ended)
         breathDone >= 0 -> BreathDoneScreen(breathDone)
         else -> when (val s = screen) {
             Screen.Tabs -> Tabs(
-                c, tab, onTab = { tab = it },
+                c, tab, onTab = { tab = it; context.getSharedPreferences("upekkha-ui", 0).edit().putInt("tab", it).apply() },
                 onSettings = { screen = Screen.Settings },
                 onHabit = { screen = Screen.Habit(it) },
             )
-            Screen.Settings -> SettingsScreen(c, onBack = { screen = Screen.Tabs })
+            Screen.Settings -> SettingsScreen(c, onBack = { screen = Screen.Tabs }, onMore = { screen = Screen.Cues })
+            Screen.Cues -> CueSettingsScreen { screen = Screen.Settings }
             is Screen.Habit -> HabitScreen(c, s.id, onBack = { screen = Screen.Tabs })
         }
     }
@@ -86,7 +93,7 @@ fun PracticeApp() {
 @Composable
 private fun Tabs(c: AppState, tab: Int, onTab: (Int) -> Unit, onSettings: () -> Unit, onHabit: (Long) -> Unit) {
     // Back from Breathe, Today or the log goes to Sit first, as from any tabbed screen of these apps.
-    BackHandler(enabled = tab != 0) { onTab(0) }
+    BackHandler(enabled = tab != 2) { onTab(2) }
     Scaffold(
         containerColor = MaterialTheme.colorScheme.surface,
         topBar = {
@@ -100,7 +107,7 @@ private fun Tabs(c: AppState, tab: Int, onTab: (Int) -> Unit, onSettings: () -> 
             StoneTabs(
                 labels = listOf(
                     stringResource(R.string.tab_sit), stringResource(R.string.tab_breathe),
-                    stringResource(R.string.tab_today), stringResource(R.string.tab_log),
+                    "Buteyko", stringResource(R.string.tab_today), stringResource(R.string.tab_log),
                 ),
                 selected = tab,
                 onSelect = onTab,
@@ -108,8 +115,9 @@ private fun Tabs(c: AppState, tab: Int, onTab: (Int) -> Unit, onSettings: () -> 
             when (tab) {
                 0 -> SitTab(c)
                 1 -> BreatheTab()
-                2 -> TodayTab(c, onHabit = onHabit, onSit = { onTab(0) })
-                else -> LogTab(c)
+                2 -> ButeykoTab()
+                3 -> TodayTab(c, onHabit = onHabit, onSit = { onTab(0) })
+                else -> TrackingTab(c)
             }
         }
     }

@@ -59,7 +59,9 @@ object Backup {
 
     /** Reads a backup, or throws if it is not one of ours. */
     fun read(text: String): Contents {
+        require(text.toByteArray().size <= 32 * 1024 * 1024) { "Backup exceeds 32 MB" }
         val root = JSONObject(text)
+        require(root.optInt("version", 1) in 1..2) { "Unsupported backup version" }
         require(root.optString("format") == FORMAT) { "not a Practice backup" }
         val habits = root.getJSONArray("habits").let { a ->
             (0 until a.length()).map { i ->
@@ -81,6 +83,16 @@ object Backup {
                     o.optString("note"), o.optString("kind", Session.SIT).ifEmpty { Session.SIT }, o.optString("pattern"),
                 )
             }
+        }
+        require(habits.size in 1..1000 && habits.count { it.habit.builtin } == 1)
+        require(sessions.size <= 100000)
+        for (h in habits) {
+            require(h.habit.name.length <= 200 && h.habit.cue.length <= 500 && h.habit.perWeek in 1..7)
+            require((h.ticks + h.rests).all { it.year in 1970..2100 })
+        }
+        for (s in sessions) {
+            require(s.start in 0..4102444800000L && s.plannedSec in 0..36000 && s.satSec in 0..36000)
+            require(s.note.length <= 10000 && s.kind in listOf(Session.SIT, Session.BREATHE) && s.pattern.length <= 200)
         }
         return Contents(habits, sessions)
     }
